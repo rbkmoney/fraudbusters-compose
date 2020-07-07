@@ -120,7 +120,6 @@ services:
     container_name: columbus
     environment:
       spring.datasource.url: "jdbc:postgresql://postgres-columbus:5432/columbus"
-#      geo.db.file.path: "file:/maxmind.mmdb"
       logging.level.com.rbkmoney.woody: "ERROR"
     depends_on:
       - postgres-columbus
