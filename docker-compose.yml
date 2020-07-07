@@ -1,0 +1,216 @@
+---
+version: '2'
+services:
+   zookeeper:
+     image: confluentinc/cp-zookeeper:5.0.1
+     hostname: zookeeper
+     container_name: zookeeper
+     environment:
+       ZOOKEEPER_CLIENT_PORT: 2181
+       ZOOKEEPER_TICK_TIME: 2000
+     volumes:
+       - /tmp/docker/zookeeper/data:/var/lib/zookeeper/data
+       - /tmp/docker/zookeeper/logs:/var/lib/zookeeper/log
+
+   broker:
+     image: confluentinc/cp-enterprise-kafka:5.0.1
+     hostname: broker
+     container_name: broker
+     depends_on:
+       - zookeeper
+     environment:
+       KAFKA_BROKER_ID: 1
+       KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
+       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT_HOST://broker:29092,PLAINTEXT://broker:9092
+       KAFKA_METRIC_REPORTERS: io.confluent.metrics.reporter.ConfluentMetricsReporter
+       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+       KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+       CONFLUENT_METRICS_REPORTER_BOOTSTRAP_SERVERS: broker:9092
+       CONFLUENT_METRICS_REPORTER_ZOOKEEPER_CONNECT: zookeeper:2181
+       CONFLUENT_METRICS_REPORTER_TOPIC_REPLICAS: 1
+       CONFLUENT_METRICS_ENABLE: 'true'
+       CONFLUENT_SUPPORT_CUSTOMER_ID: 'anonymous'
+     volumes:
+       - /tmp/docker/kafka2/data:/var/lib/kafka/data
+
+   kafka-setup:
+     image: confluentinc/cp-kafka:5.1.1
+     hostname: kafka-setup
+     container_name: kafka-setup
+     depends_on:
+       - broker
+     command: "bash -c 'echo Waiting for Kafka to be ready... && \
+                                cub kafka-ready -b broker:9092 1 60 && \
+                                kafka-topics --create --if-not-exists --zookeeper zookeeper:2181 --partitions 1 --replication-factor 1 --topic wb-list-command  && \
+                                kafka-topics --create --if-not-exists --zookeeper zookeeper:2181 --partitions 1 --replication-factor 1 --topic wb-list-event-sink && \
+                                kafka-topics --create --if-not-exists --zookeeper zookeeper:2181 --partitions 1 --replication-factor 1 --topic result  && \
+                                kafka-topics --create --if-not-exists --zookeeper zookeeper:2181 --partitions 1 --replication-factor 1 --topic p2p_result  && \
+                                kafka-topics --create --if-not-exists --zookeeper zookeeper:2181 --partitions 1 --replication-factor 1 --topic fraud_payment && \
+                                kafka-topics --create --if-not-exists --zookeeper zookeeper:2181 --partitions 1 --replication-factor 1 --topic payment_event && \
+                                kafka-topics --create --if-not-exists --zookeeper zookeeper:2181 --partitions 1 --replication-factor 1 --topic refund_event && \
+                                kafka-topics --create --if-not-exists --zookeeper zookeeper:2181 --partitions 1 --replication-factor 1 --topic chargeback_event && \
+                                kafka-topics --create --if-not-exists --zookeeper zookeeper:2181 --partitions 1 --replication-factor 1  --config cleanup.policy=compact --topic template && \
+                                kafka-topics --create --if-not-exists --zookeeper zookeeper:2181 --partitions 1 --replication-factor 1  --config cleanup.policy=compact --topic template_p2p && \
+                                kafka-topics --create --if-not-exists --zookeeper zookeeper:2181 --partitions 1 --replication-factor 1  --config cleanup.policy=compact --topic template_reference && \
+                                kafka-topics --create --if-not-exists --zookeeper zookeeper:2181 --partitions 1 --replication-factor 1  --config cleanup.policy=compact --topic template_p2p_reference && \
+                                kafka-topics --create --if-not-exists --zookeeper zookeeper:2181 --partitions 1 --replication-factor 1  --config cleanup.policy=compact --topic group_list && \
+                                kafka-topics --create --if-not-exists --zookeeper zookeeper:2181 --partitions 1 --replication-factor 1  --config cleanup.policy=compact --topic group_p2p_list && \
+                                kafka-topics --create --if-not-exists --zookeeper zookeeper:2181 --partitions 1 --replication-factor 1  --config cleanup.policy=compact --topic group_reference && \
+                                kafka-topics --create --if-not-exists --zookeeper zookeeper:2181 --partitions 1 --replication-factor 1  --config cleanup.policy=compact --topic group_p2p_reference && \
+                                echo Waiting 60 seconds for Connect to be ready... && \
+                                sleep 60'"
+
+   riak:
+     image: basho/riak-kv
+     hostname: riak
+     container_name: riak
+     ports:
+       - "8087:8087"
+       - "8098:8098"
+     environment:
+       - CLUSTER_NAME=riakts
+     labels:
+       - "com.basho.riak.cluster.name=riakts"
+     volumes:
+       - /tmp/docker/riak/data:/etc/riak/schemas
+
+   clickhouse:
+     image: yandex/clickhouse-server:19.17
+     hostname: clickhouse
+     container_name: clickhouse
+     ports:
+       - 9000:9000
+       - 8123:8123
+     volumes:
+       - ./clickhouse/data:/var/lib/clickhouse
+       - ./clickhouse/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
+
+   grafana:
+     image: grafana/grafana:5.1.0
+     hostname: grafana
+     container_name: grafana
+     ports:
+       - 3000:3000
+     environment:
+       GF_INSTALL_PLUGINS: "grafana-piechart-panel,vertamedia-clickhouse-datasource"
+       GF_SECURITY_ADMIN_USER: "admin"
+       GF_SECURITY_ADMIN_PASSWORD: "admin"
+     volumes:
+       - ./grafana/dashboards:/etc/grafana/provisioning/dashboards
+       - ./grafana/datasources:/etc/grafana/provisioning/datasources
+
+   postgres-columbus:
+    image: dr2.rbkmoney.com/rbkmoney/postgres-geodata:0758740c8c3f350ddd7a8331b5e1cbb0374f4832
+    hostname: postgres-columbus
+    container_name: postgres-columbus
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: columbus
+    entrypoint:
+      - /docker-entrypoint.sh
+      - postgres
+    ports:
+      - 5432:5432
+
+   columbus:
+    image: dr2.rbkmoney.com/rbkmoney/columbus:79a03704da4b17afa6f6ce07dbd3522fd5a52442
+    hostname: columbus
+    container_name: columbus
+    environment:
+      spring.datasource.url: "jdbc:postgresql://postgres-columbus:5432/columbus"
+#      geo.db.file.path: "file:/maxmind.mmdb"
+      logging.level.com.rbkmoney.woody: "ERROR"
+    depends_on:
+      - postgres-columbus
+    ports:
+      - 8990:8022
+
+   wblist:
+     image: dr2.rbkmoney.com/rbkmoney/wb-list-manager:d5ee1b86445e20f45d0271f86696446f57fc829b
+     hostname: wblist
+     container_name: wblist
+     environment:
+       kafka.bootstrap.servers: "broker:9092"
+       riak.address: riak
+       riak.port: 8087
+       management.metrics.export.statsd.enabled: "false"
+       logging.level.com.rbkmoney.woody: "ERROR"
+       kafka.wblist.topic.command: "wb-list-command"
+       kafka.wblist.topic.event.sink: "wb-list-event-sink"
+     depends_on:
+       - riak
+       - broker
+     ports:
+       - 8991:8022
+
+   fraudbusters:
+     image: dr2.rbkmoney.com/rbkmoney/fraudbusters:e4b2f9e830890a8956d17b6a0599a4ba2ebb1c1c
+     hostname: fraudbusters
+     container_name: fraudbusters
+     environment:
+       kafka.bootstrap.servers: "broker:9092"
+       geo.ip.service.url: "http://columbus:8022/repo"
+       wb.list.service.url: "http://wblist:8022/v1/wb_list"
+       clickhouse.db.url: "jdbc:clickhouse://clickhouse:8123/default"
+       spring.profiles.active: "full-prod"
+       logging.config: "tmp/logback-test.xml"
+     depends_on:
+       - clickhouse
+       - broker
+       - columbus
+       - wblist
+       - kafka-setup
+     ports:
+       - 8999:8022
+     volumes:
+       - ./log-java:/opt/fraudbusters/tmp
+
+   postgres-fb:
+     container_name: postgres_container
+     hostname: postgres-fb
+     image: postgres
+     environment:
+       POSTGRES_USER: postgres
+       POSTGRES_PASSWORD: postgres
+       POSTGRES_DB: wblist
+       PGDATA: /data/postgres
+     volumes:
+        - ./postgres/data/3:/data/postgres
+     restart: unless-stopped
+
+   fb-management:
+     image: dr2.rbkmoney.com/rbkmoney/fraudbusters-management:ecb5272c2c5920d4911959e3ec2b90e90c07377d
+     hostname: fb-management
+     container_name: fb-management
+     environment:
+       kafka.bootstrap.servers: "broker:9092"
+       kafka.wblist.topic.command: "wb-list-command"
+       kafka.wblist.topic.event.sink: "wb-list-event-sink"
+       kafka.fraudbusters.template: "template"
+       kafka.fraudbusters.reference: "template_reference"
+       spring.datasource.url: "jdbc:postgresql://postgres-fb:5432/wblist"
+       logging.config: "./tmp/logback-test.xml"
+       management.metrics.binders.jvm.enabled: 'false'
+       service.validate.payment.url: 'http://fraudbusters:8022/fraud_payment/v1/'
+     depends_on:
+       - fraudbusters
+       - broker
+       - wblist
+       - postgres-fb
+       - kafka-setup
+     ports:
+       - 8080:8080
+     volumes:
+       - ./log-java:/opt/fraudbusters-management/tmp
+
+networks:
+  default:
+    driver: bridge
+    driver_opts:
+      com.docker.network.enable_ipv6: "true"
+      com.docker.network.bridge.enable_ip_masquerade: "true"
+
+volumes:
+  mi2: {}

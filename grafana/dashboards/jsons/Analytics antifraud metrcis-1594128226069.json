@@ -1,0 +1,1391 @@
+{
+  "__inputs": [
+    {
+      "name": "ClickHouse",
+      "label": "ClickHouse",
+      "description": "",
+      "type": "datasource",
+      "pluginId": "vertamedia-clickhouse-datasource",
+      "pluginName": "ClickHouse"
+    },
+    {
+      "name": "VAR_PARTYID",
+      "type": "constant",
+      "label": "partyId",
+      "value": ".",
+      "description": ""
+    },
+    {
+      "name": "VAR_SHOPID",
+      "type": "constant",
+      "label": "shopId",
+      "value": ".",
+      "description": ""
+    },
+    {
+      "name": "VAR_PAYMENTCOUNTRY",
+      "type": "constant",
+      "label": "paymentCountry",
+      "value": ".",
+      "description": ""
+    },
+    {
+      "name": "VAR_BIN",
+      "type": "constant",
+      "label": "bin",
+      "value": ".",
+      "description": ""
+    }
+  ],
+  "__requires": [
+    {
+      "type": "grafana",
+      "id": "grafana",
+      "name": "Grafana",
+      "version": "5.1.0"
+    },
+    {
+      "type": "panel",
+      "id": "table",
+      "name": "Table",
+      "version": "5.0.0"
+    },
+    {
+      "type": "datasource",
+      "id": "vertamedia-clickhouse-datasource",
+      "name": "ClickHouse",
+      "version": "2.0.1"
+    }
+  ],
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": "-- Grafana --",
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "gnetId": null,
+  "graphTooltip": 0,
+  "id": null,
+  "iteration": 1594127323513,
+  "links": [],
+  "panels": [
+    {
+      "cacheTimeout": null,
+      "columns": [],
+      "datasource": "ClickHouse",
+      "fontSize": "100%",
+      "gridPos": {
+        "h": 6,
+        "w": 12,
+        "x": 0,
+        "y": 0
+      },
+      "id": 14,
+      "links": [],
+      "options": {},
+      "pageSize": null,
+      "pluginVersion": "6.3.6",
+      "scroll": true,
+      "showHeader": true,
+      "sort": {
+        "col": 0,
+        "desc": true
+      },
+      "styles": [
+        {
+          "alias": "sm",
+          "dateFormat": "YYYY-MM-DD HH:mm:ss",
+          "decimals": 2,
+          "pattern": "sm",
+          "type": "number",
+          "unit": "short"
+        },
+        {
+          "alias": "cnt",
+          "colorMode": null,
+          "colors": [
+            "rgba(245, 54, 54, 0.9)",
+            "rgba(237, 129, 40, 0.89)",
+            "rgba(50, 172, 45, 0.97)"
+          ],
+          "dateFormat": "YYYY-MM-DD HH:mm:ss",
+          "decimals": null,
+          "mappingType": 1,
+          "pattern": "cnt",
+          "thresholds": [],
+          "type": "number",
+          "unit": "none"
+        },
+        {
+          "alias": "",
+          "colorMode": null,
+          "colors": [
+            "rgba(245, 54, 54, 0.9)",
+            "rgba(237, 129, 40, 0.89)",
+            "rgba(50, 172, 45, 0.97)"
+          ],
+          "decimals": 2,
+          "pattern": "/.*/",
+          "thresholds": [],
+          "type": "number",
+          "unit": "none"
+        }
+      ],
+      "targets": [
+        {
+          "database": "fraud",
+          "dateColDataType": "",
+          "dateLoading": false,
+          "dateTimeType": "DATETIME",
+          "datetimeLoading": false,
+          "extrapolate": true,
+          "format": "table",
+          "formattedQuery": "SELECT $timeSeries as t, count() FROM $table WHERE $timeFilter GROUP BY t ORDER BY t",
+          "intervalFactor": 1,
+          "query": "SELECT\n    sum(amount)/100 as sm,\n    count() as cnt,\n    avg(amount/100) as avg,\n    max(amount/100) as max,\n    currency\nFROM $table\nWHERE\n    toDate($from) <= timestamp\n    and toDate($to) >= timestamp\n    and $from <= toDateTime(eventTime)\n    and $to >= toDateTime(eventTime)\n    and match(partyId, '$partyId')\n    and match(shopId, '$shopId')\n    and status='captured' \nand shopId!='TEST'\nGROUP BY currency\nORDER BY cnt desc\nLIMIT 20",
+          "rawQuery": "SELECT     sum(amount)/100 as sm,     count() as cnt,     avg(amount/100) as avg,     max(amount/100) as max,     currency FROM fraud.payment WHERE     toDate(1594117417) <= timestamp     and toDate(1594128219) >= timestamp     and 1594117417 <= toDateTime(eventTime)     and 1594128219 >= toDateTime(eventTime)     and match(partyId, '.')     and match(shopId, '.')     and status='captured'  and shopId!='TEST' GROUP BY currency ORDER BY cnt desc LIMIT 20",
+          "refId": "A",
+          "round": "0s",
+          "table": "payment",
+          "tableLoading": false
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Payment",
+      "transform": "table",
+      "type": "table"
+    },
+    {
+      "cacheTimeout": null,
+      "columns": [],
+      "datasource": "ClickHouse",
+      "fontSize": "100%",
+      "gridPos": {
+        "h": 6,
+        "w": 12,
+        "x": 12,
+        "y": 0
+      },
+      "id": 19,
+      "links": [],
+      "options": {},
+      "pageSize": null,
+      "pluginVersion": "6.3.6",
+      "scroll": true,
+      "showHeader": true,
+      "sort": {
+        "col": 0,
+        "desc": true
+      },
+      "styles": [
+        {
+          "alias": "sm",
+          "dateFormat": "YYYY-MM-DD HH:mm:ss",
+          "decimals": 2,
+          "pattern": "sm",
+          "type": "number",
+          "unit": "short"
+        },
+        {
+          "alias": "",
+          "colorMode": null,
+          "colors": [
+            "rgba(245, 54, 54, 0.9)",
+            "rgba(237, 129, 40, 0.89)",
+            "rgba(50, 172, 45, 0.97)"
+          ],
+          "dateFormat": "YYYY-MM-DD HH:mm:ss",
+          "decimals": null,
+          "mappingType": 1,
+          "pattern": "cnt",
+          "thresholds": [],
+          "type": "number",
+          "unit": "none"
+        },
+        {
+          "alias": "",
+          "colorMode": null,
+          "colors": [
+            "rgba(245, 54, 54, 0.9)",
+            "rgba(237, 129, 40, 0.89)",
+            "rgba(50, 172, 45, 0.97)"
+          ],
+          "decimals": 2,
+          "pattern": "/.*/",
+          "thresholds": [],
+          "type": "number",
+          "unit": "short"
+        }
+      ],
+      "targets": [
+        {
+          "database": "fraud",
+          "dateColDataType": "",
+          "dateLoading": false,
+          "dateTimeColDataType": "eventTime",
+          "dateTimeType": "TIMESTAMP",
+          "datetimeLoading": false,
+          "extrapolate": true,
+          "format": "table",
+          "formattedQuery": "SELECT $timeSeries as t, count() FROM $table WHERE $timeFilter GROUP BY t ORDER BY t",
+          "intervalFactor": 1,
+          "query": "SELECT\n    sum(amount / 100) as sm,\n    count() as cnt,\n    avg(amount / 100) as avg,\n    currency\nFROM $table\nWHERE\n    toDate($from) <= timestamp\n    and toDate($to) >= timestamp\n    and $from <= toDateTime(eventTime)\n    and $to >= toDateTime(eventTime)\n    and match(partyId, '$partyId')\n    and match(shopId, '$shopId')\n    and status = 'succeeded'\nand shopId!='TEST'\nGROUP BY currency\nORDER BY cnt desc\nLIMIT 20",
+          "rawQuery": "SELECT     sum(amount / 100) as sm,     count() as cnt,     avg(amount / 100) as avg,     currency FROM fraud.refund WHERE     toDate(1594117417) <= timestamp     and toDate(1594128219) >= timestamp     and 1594117417 <= toDateTime(eventTime)     and 1594128219 >= toDateTime(eventTime)     and match(partyId, '.')     and match(shopId, '.')     and status = 'succeeded' and shopId!='TEST' GROUP BY currency ORDER BY cnt desc LIMIT 20",
+          "refId": "A",
+          "round": "0s",
+          "table": "refund",
+          "tableLoading": false
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Refunds",
+      "transform": "table",
+      "type": "table"
+    },
+    {
+      "cacheTimeout": null,
+      "columns": [],
+      "datasource": "ClickHouse",
+      "fontSize": "100%",
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 6
+      },
+      "id": 28,
+      "links": [],
+      "options": {},
+      "pageSize": null,
+      "pluginVersion": "6.3.6",
+      "scroll": true,
+      "showHeader": true,
+      "sort": {
+        "col": null,
+        "desc": false
+      },
+      "styles": [
+        {
+          "alias": "",
+          "colorMode": null,
+          "colors": [
+            "rgba(245, 54, 54, 0.9)",
+            "rgba(237, 129, 40, 0.89)",
+            "rgba(50, 172, 45, 0.97)"
+          ],
+          "dateFormat": "YYYY-MM-DD HH:mm:ss",
+          "decimals": 2,
+          "mappingType": 1,
+          "pattern": "percent",
+          "thresholds": [],
+          "type": "number",
+          "unit": "percent"
+        },
+        {
+          "alias": "",
+          "colorMode": null,
+          "colors": [
+            "rgba(245, 54, 54, 0.9)",
+            "rgba(237, 129, 40, 0.89)",
+            "rgba(50, 172, 45, 0.97)"
+          ],
+          "decimals": 2,
+          "pattern": "/.*/",
+          "thresholds": [],
+          "type": "number",
+          "unit": "short"
+        }
+      ],
+      "targets": [
+        {
+          "database": "analytic",
+          "dateColDataType": "timestamp",
+          "dateLoading": false,
+          "dateTimeColDataType": "eventTime",
+          "dateTimeType": "TIMESTAMP",
+          "datetimeLoading": false,
+          "extrapolate": true,
+          "format": "table",
+          "formattedQuery": "SELECT $timeSeries as t, count() FROM $table WHERE $timeFilter GROUP BY t ORDER BY t",
+          "intervalFactor": 1,
+          "query": "SELECT\ntimestamp,\n    shopId,\n    currency,\n    sm_ref,\n    sm_all,\n    sm_ref * 100 / sm_all as percent\nFROM\n(\n    SELECT\n    timestamp,\n        shopId,\n        currency,\n        sum(amount / 100) as sm_ref\n    FROM fraud.refund\n    WHERE\n        toDate($from) <= timestamp\n        and toDate($to) >= timestamp\n        and match(partyId, '$partyId')\n        and match(shopId, '$shopId')\n        and status = 'succeeded'\n        and shopId != 'TEST'\n    GROUP BY\n        timestamp,\n        currency,\n        shopId\n)\nANY LEFT JOIN\n(\n    SELECT\n    timestamp,\n        shopId,\n        currency,\n        sum(amount / 100) as sm_all\n    FROM fraud.payment\n    WHERE\n        toDate($from) <= timestamp\n        and toDate($to) >= timestamp\n        and match(partyId, '$partyId')\n        and match(shopId, '$shopId')\n        and status = 'captured'\n        and shopId != 'TEST'\n    GROUP BY\n    timestamp,\n        currency,\n        shopId\n    HAVING  (sm_all > 100000 and currency='RUB') OR (sm_all > 1500 and currency='USD') OR (sm_all > 1500 and currency='EUR')\n) USING \ntimestamp,\n    shopId,\n    currency\nwhere sm_all > 0\nORDER BY percent DESC",
+          "rawQuery": "SELECT timestamp,     shopId,     currency,     sm_ref,     sm_all,     sm_ref * 100 / sm_all as percent FROM (     SELECT     timestamp,         shopId,         currency,         sum(amount / 100) as sm_ref     FROM fraud.refund     WHERE         toDate(1594117417) <= timestamp         and toDate(1594128219) >= timestamp         and match(partyId, '.')         and match(shopId, '.')         and status = 'succeeded'         and shopId != 'TEST'     GROUP BY         timestamp,         currency,         shopId ) ANY LEFT JOIN (     SELECT     timestamp,         shopId,         currency,         sum(amount / 100) as sm_all     FROM fraud.payment     WHERE         toDate(1594117417) <= timestamp         and toDate(1594128219) >= timestamp         and match(partyId, '.')         and match(shopId, '.')         and status = 'captured'         and shopId != 'TEST'     GROUP BY     timestamp,         currency,         shopId     HAVING  (sm_all > 100000 and currency='RUB') OR (sm_all > 1500 and currency='USD') OR (sm_all > 1500 and currency='EUR') ) USING  timestamp,     shopId,     currency where sm_all > 0 ORDER BY percent DESC",
+          "refId": "A",
+          "round": "0s",
+          "table": "events_sink",
+          "tableLoading": false
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Refunds by all",
+      "transform": "table",
+      "type": "table"
+    },
+    {
+      "collapsed": true,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 14
+      },
+      "id": 26,
+      "panels": [
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "ClickHouse",
+          "fill": 1,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 11,
+            "w": 12,
+            "x": 0,
+            "y": 15
+          },
+          "id": 24,
+          "legend": {
+            "alignAsTable": true,
+            "avg": false,
+            "current": true,
+            "max": true,
+            "min": false,
+            "rightSide": true,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": false,
+          "linewidth": 1,
+          "nullPointMode": "null",
+          "options": {
+            "dataLinks": []
+          },
+          "percentage": false,
+          "pointradius": 3,
+          "points": true,
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "database": "analytic",
+              "dateColDataType": "timestamp",
+              "dateLoading": false,
+              "dateTimeColDataType": "eventTime",
+              "dateTimeType": "TIMESTAMP",
+              "datetimeLoading": false,
+              "extrapolate": true,
+              "format": "time_series",
+              "formattedQuery": "SELECT $timeSeries as t, count() FROM $table WHERE $timeFilter GROUP BY t ORDER BY t",
+              "interval": "1m",
+              "intervalFactor": 1,
+              "query": "SELECT\n    $timeSeries as t,\n    stddevPop(amount/100) as cnt\nFROM fraud.payment\nWHERE\n    toDate($from) <= timestamp\n    and toDate($to) >= timestamp\n    and $from <= toDateTime(eventTime)\n    and $to >= toDateTime(eventTime)\n    and match(partyId, '$partyId')\n    and match(shopId, '$shopId')\nand shopId!='TEST'\nGROUP BY t, shopId\nORDER BY t",
+              "rawQuery": "SELECT     (intDiv(eventTime, 60) * 60) * 1000 as t,     stddevPop(amount/100) as cnt FROM fraud.payment WHERE     toDate(1594117263) <= timestamp     and toDate(1594128065) >= timestamp     and 1594117263 <= toDateTime(eventTime)     and 1594128065 >= toDateTime(eventTime)     and match(partyId, '.')     and match(shopId, '.') and shopId!='TEST' GROUP BY t, shopId ORDER BY t",
+              "refId": "A",
+              "round": "0s",
+              "table": "events_sink",
+              "tableLoading": false
+            }
+          ],
+          "thresholds": [],
+          "timeFrom": null,
+          "timeRegions": [],
+          "timeShift": null,
+          "title": " Standard deviation",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            },
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            }
+          ],
+          "yaxis": {
+            "align": false,
+            "alignLevel": null
+          }
+        },
+        {
+          "columns": [],
+          "datasource": "ClickHouse",
+          "fontSize": "100%",
+          "gridPos": {
+            "h": 11,
+            "w": 12,
+            "x": 12,
+            "y": 15
+          },
+          "id": 27,
+          "options": {},
+          "pageSize": null,
+          "scroll": true,
+          "showHeader": true,
+          "sort": {
+            "col": 0,
+            "desc": true
+          },
+          "styles": [
+            {
+              "alias": "Time",
+              "dateFormat": "YYYY-MM-DD HH:mm:ss",
+              "pattern": "t",
+              "type": "date"
+            },
+            {
+              "alias": "",
+              "colorMode": null,
+              "colors": [
+                "rgba(245, 54, 54, 0.9)",
+                "rgba(237, 129, 40, 0.89)",
+                "rgba(50, 172, 45, 0.97)"
+              ],
+              "decimals": 2,
+              "pattern": "/.*/",
+              "thresholds": [],
+              "type": "number",
+              "unit": "short"
+            }
+          ],
+          "targets": [
+            {
+              "database": "analytic",
+              "dateColDataType": "timestamp",
+              "dateLoading": false,
+              "dateTimeColDataType": "eventTime",
+              "dateTimeType": "TIMESTAMP",
+              "datetimeLoading": false,
+              "extrapolate": true,
+              "format": "table",
+              "formattedQuery": "SELECT $timeSeries as t, count() FROM $table WHERE $timeFilter GROUP BY t ORDER BY t",
+              "interval": "1m",
+              "intervalFactor": 1,
+              "query": "SELECT\n    $timeSeries as t,\n    shopId,\n    stddevPop(amount/100) as cnt\nFROM fraud.payment\nWHERE\n    toDate($from) <= timestamp\n    and toDate($to) >= timestamp\n    and $from <= toDateTime(eventTime)\n    and $to >= toDateTime(eventTime)\n    and match(partyId, '$partyId')\n    and match(shopId, '$shopId')\nGROUP BY t, shopId\nHAVING cnt > 20000\nORDER BY t",
+              "rawQuery": "SELECT     (intDiv(eventTime, 60) * 60) * 1000 as t,     shopId,     stddevPop(amount/100) as cnt FROM fraud.payment WHERE     toDate(1594117263) <= timestamp     and toDate(1594128065) >= timestamp     and 1594117263 <= toDateTime(eventTime)     and 1594128065 >= toDateTime(eventTime)     and match(partyId, '.')     and match(shopId, '.') GROUP BY t, shopId HAVING cnt > 20000 ORDER BY t",
+              "refId": "A",
+              "round": "0s",
+              "table": "events_sink",
+              "tableLoading": false
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Shop deviation > 20k",
+          "transform": "table",
+          "type": "table"
+        }
+      ],
+      "title": "Deviation",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 15
+      },
+      "id": 21,
+      "panels": [
+        {
+          "cacheTimeout": null,
+          "columns": [],
+          "datasource": "ClickHouse",
+          "fontSize": "100%",
+          "gridPos": {
+            "h": 9,
+            "w": 12,
+            "x": 0,
+            "y": 27
+          },
+          "id": 18,
+          "links": [],
+          "options": {},
+          "pageSize": null,
+          "pluginVersion": "6.3.6",
+          "scroll": true,
+          "showHeader": true,
+          "sort": {
+            "col": 2,
+            "desc": true
+          },
+          "styles": [
+            {
+              "alias": "Time",
+              "dateFormat": "YYYY-MM-DD HH:mm:ss",
+              "pattern": "Time",
+              "type": "date"
+            },
+            {
+              "alias": "",
+              "colorMode": null,
+              "colors": [
+                "rgba(245, 54, 54, 0.9)",
+                "rgba(237, 129, 40, 0.89)",
+                "rgba(50, 172, 45, 0.97)"
+              ],
+              "decimals": 2,
+              "pattern": "/.*/",
+              "thresholds": [],
+              "type": "number",
+              "unit": "short"
+            }
+          ],
+          "targets": [
+            {
+              "database": "analytic",
+              "dateColDataType": "timestamp",
+              "dateLoading": false,
+              "dateTimeType": "DATETIME",
+              "datetimeLoading": false,
+              "extrapolate": true,
+              "format": "table",
+              "formattedQuery": "SELECT $timeSeries as t, count() FROM $table WHERE $timeFilter GROUP BY t ORDER BY t",
+              "intervalFactor": 1,
+              "query": "SELECT\n    currency as currency,\n    shopId as shop,\n    sum(amount / 100) as sm\nFROM fraud.payment\nWHERE\n    toDate($from) <= timestamp\n    and toDate($to) >= timestamp\n    and $from <= toDateTime(eventTime)\n    and $to >= toDateTime(eventTime)\n    and match(partyId, '$partyId')\n    and match(shopId, '$shopId')\nGROUP BY\n    shopId,\n    currency\nHAVING shopId!='TEST'\nORDER BY sm desc\nLIMIT 20",
+              "rawQuery": "SELECT     currency as currency,     shopId as shop,     sum(amount / 100) as sm FROM fraud.payment WHERE     toDate(1594116784) <= timestamp     and toDate(1594127586) >= timestamp     and 1594116784 <= toDateTime(eventTime)     and 1594127586 >= toDateTime(eventTime)     and match(partyId, '.')     and match(shopId, '.') GROUP BY     shopId,     currency HAVING shopId!='TEST' ORDER BY sm desc LIMIT 20",
+              "refId": "A",
+              "round": "0s",
+              "table": "events_sink",
+              "tableLoading": false
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Top 20 shop sum",
+          "transform": "table",
+          "type": "table"
+        },
+        {
+          "aliasColors": {},
+          "breakPoint": "50%",
+          "cacheTimeout": null,
+          "combine": {
+            "label": "Others",
+            "threshold": 0
+          },
+          "datasource": "ClickHouse",
+          "fontSize": "80%",
+          "format": "short",
+          "gridPos": {
+            "h": 9,
+            "w": 12,
+            "x": 12,
+            "y": 27
+          },
+          "id": 5,
+          "interval": null,
+          "legend": {
+            "percentage": true,
+            "show": true,
+            "sort": "total",
+            "sortDesc": true,
+            "values": true
+          },
+          "legendType": "Right side",
+          "links": [],
+          "maxDataPoints": 3,
+          "nullPointMode": "connected",
+          "options": {},
+          "pieType": "pie",
+          "strokeWidth": 1,
+          "targets": [
+            {
+              "database": "analytic",
+              "dateColDataType": "timestamp",
+              "dateLoading": false,
+              "dateTimeColDataType": "eventTime",
+              "dateTimeType": "DATETIME",
+              "datetimeLoading": false,
+              "extrapolate": true,
+              "format": "time_series",
+              "formattedQuery": "SELECT $timeSeries as t, count() FROM $table WHERE $timeFilter GROUP BY t ORDER BY t",
+              "interval": "",
+              "intervalFactor": 1,
+              "query": "SELECT\n    sum(amount)/100 as cnt,\n    currency\nFROM fraud.payment\nWHERE\n    toDate($from) <= timestamp\n    and toDate($to) >= timestamp\n    and $from <= toDateTime(eventTime)\n    and $to >= toDateTime(eventTime)\n    and match(partyId, '$partyId')\n    and match(shopId, '$shopId')\n    and status='captured'\nand shopId!='TEST'\nGROUP BY currency\nORDER BY cnt desc\nLIMIT 20",
+              "rawQuery": "SELECT     sum(amount)/100 as cnt,     currency FROM fraud.payment WHERE     toDate(1594116784) <= timestamp     and toDate(1594127586) >= timestamp     and 1594116784 <= toDateTime(eventTime)     and 1594127586 >= toDateTime(eventTime)     and match(partyId, '.')     and match(shopId, '.')     and status='captured' and shopId!='TEST' GROUP BY currency ORDER BY cnt desc LIMIT 20",
+              "refId": "A",
+              "round": "0s",
+              "table": "events_sink",
+              "tableLoading": false
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Sum by currency",
+          "type": "grafana-piechart-panel",
+          "valueName": "total"
+        }
+      ],
+      "title": "sm",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 16
+      },
+      "id": 11,
+      "panels": [
+        {
+          "columns": [],
+          "datasource": "ClickHouse",
+          "fontSize": "100%",
+          "gridPos": {
+            "h": 9,
+            "w": 12,
+            "x": 0,
+            "y": 28
+          },
+          "id": 9,
+          "options": {},
+          "pageSize": null,
+          "scroll": true,
+          "showHeader": true,
+          "sort": {
+            "col": null,
+            "desc": false
+          },
+          "styles": [
+            {
+              "alias": "bin",
+              "dateFormat": "YYYY-MM-DD HH:mm:ss",
+              "pattern": "bin",
+              "type": "string"
+            },
+            {
+              "alias": "",
+              "colorMode": null,
+              "colors": [
+                "rgba(245, 54, 54, 0.9)",
+                "rgba(237, 129, 40, 0.89)",
+                "rgba(50, 172, 45, 0.97)"
+              ],
+              "decimals": 2,
+              "pattern": "/.*/",
+              "thresholds": [],
+              "type": "number",
+              "unit": "short"
+            }
+          ],
+          "targets": [
+            {
+              "database": "analytic",
+              "dateColDataType": "timestamp",
+              "dateLoading": false,
+              "dateTimeColDataType": "eventTIme",
+              "dateTimeType": "DATETIME",
+              "datetimeLoading": false,
+              "extrapolate": true,
+              "format": "table",
+              "formattedQuery": "SELECT $timeSeries as t, count() FROM $table WHERE $timeFilter GROUP BY t ORDER BY t",
+              "intervalFactor": 1,
+              "query": "SELECT\n    bin, paymentCountry,\n    count(id) as cnt\nFROM fraud.payment\nWHERE toDate($from) <= timestamp and toDate($to) >= timestamp and  $from <= toDateTime(eventTime) and  $to >= toDateTime(eventTime) \nand match(partyId, '$partyId') and match(partyId, '$partyId') and match(shopId, '$shopId') \nand match(paymentCountry, '$paymentCountry') and match(bin, '$bin')  \nand (cardToken!='WLCeYVOp4bW1hJ3oCv8KG'\nand cardToken!='4xINpeuFJKxLPFGrdcrnUK'\nand cardToken!='vUp3YTW8wcLTS0VttdebO'\nand cardToken!='3zRjUhax48E1IY7wp7XZrS'\nand cardToken!='2ttEW2bq4CpuBRD0VOWW9g'\nand cardToken!='MfYHwQObqcIYlUTZD0v1y'\nand cardToken!='4Y3xD7ftAkQrAwpEds5lMk'\nand cardToken!='3q70aYBG6EH14ATRxxaom8'\nand cardToken!='quvSmP2lQwjouDkbF84Op'\nand cardToken!='4rqCK4KF5VwQL6o0TBzAHT'\nand cardToken!='6I2L72hZrsc2SHUbDIVoZF'\nand cardToken!='2X4iZv4CZ7XIG01DSgj4bv'\nand cardToken!='70DVkKLfywEJGaj7oqUY1Q'\nand cardToken!='7fAtmPASn44rNYieJfiv13'\nand cardToken!='2CL3xaXNWq76hEGcVMj1rF'\nand cardToken!='F3hq028Qsuo4KBNbRu8ud'\nand cardToken!='4XZts3K0zWi7JAfU9kK8Ku'\nand cardToken!='3csJuJyUbM7JmDCFiJoTfj'\nand cardToken!='8yCcCMHbhUWbH9Kh6ZtLW'\nand cardToken!='5iR9GSS7mzRFaYH1yROOiC'\nand cardToken!='7MZOauIs8yUtoKuCamADWv'\nand cardToken!='56kxngx6KgFFHrUbynNxi7')\nand shopId!='TEST'\nGROUP BY bin, paymentCountry\nORDER BY cnt desc\nlimit 20",
+              "rawQuery": "SELECT     bin, paymentCountry,     count(id) as cnt FROM fraud.payment WHERE toDate(1594117263) <= timestamp and toDate(1594128065) >= timestamp and  1594117263 <= toDateTime(eventTime) and  1594128065 >= toDateTime(eventTime)  and match(partyId, '.') and match(partyId, '.') and match(shopId, '.')  and match(paymentCountry, '.') and match(bin, '.')   and (cardToken!='WLCeYVOp4bW1hJ3oCv8KG' and cardToken!='4xINpeuFJKxLPFGrdcrnUK' and cardToken!='vUp3YTW8wcLTS0VttdebO' and cardToken!='3zRjUhax48E1IY7wp7XZrS' and cardToken!='2ttEW2bq4CpuBRD0VOWW9g' and cardToken!='MfYHwQObqcIYlUTZD0v1y' and cardToken!='4Y3xD7ftAkQrAwpEds5lMk' and cardToken!='3q70aYBG6EH14ATRxxaom8' and cardToken!='quvSmP2lQwjouDkbF84Op' and cardToken!='4rqCK4KF5VwQL6o0TBzAHT' and cardToken!='6I2L72hZrsc2SHUbDIVoZF' and cardToken!='2X4iZv4CZ7XIG01DSgj4bv' and cardToken!='70DVkKLfywEJGaj7oqUY1Q' and cardToken!='7fAtmPASn44rNYieJfiv13' and cardToken!='2CL3xaXNWq76hEGcVMj1rF' and cardToken!='F3hq028Qsuo4KBNbRu8ud' and cardToken!='4XZts3K0zWi7JAfU9kK8Ku' and cardToken!='3csJuJyUbM7JmDCFiJoTfj' and cardToken!='8yCcCMHbhUWbH9Kh6ZtLW' and cardToken!='5iR9GSS7mzRFaYH1yROOiC' and cardToken!='7MZOauIs8yUtoKuCamADWv' and cardToken!='56kxngx6KgFFHrUbynNxi7') and shopId!='TEST' GROUP BY bin, paymentCountry ORDER BY cnt desc limit 20",
+              "refId": "A",
+              "round": "0s",
+              "table": "events_sink",
+              "tableLoading": false
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Top 20 bin activity",
+          "transform": "table",
+          "type": "table"
+        },
+        {
+          "aliasColors": {},
+          "breakPoint": "50%",
+          "cacheTimeout": null,
+          "combine": {
+            "label": "Others",
+            "threshold": 0
+          },
+          "datasource": "ClickHouse",
+          "fontSize": "80%",
+          "format": "short",
+          "gridPos": {
+            "h": 9,
+            "w": 12,
+            "x": 12,
+            "y": 28
+          },
+          "id": 17,
+          "interval": null,
+          "legend": {
+            "percentage": true,
+            "show": true,
+            "sort": "total",
+            "sortDesc": true,
+            "values": true
+          },
+          "legendType": "Right side",
+          "links": [],
+          "maxDataPoints": 3,
+          "nullPointMode": "connected",
+          "options": {},
+          "pieType": "pie",
+          "strokeWidth": 1,
+          "targets": [
+            {
+              "database": "analytic",
+              "dateColDataType": "timestamp",
+              "dateLoading": false,
+              "dateTimeColDataType": "eventTime",
+              "dateTimeType": "DATETIME",
+              "datetimeLoading": false,
+              "extrapolate": true,
+              "format": "time_series",
+              "formattedQuery": "SELECT $timeSeries as t, count() FROM $table WHERE $timeFilter GROUP BY t ORDER BY t",
+              "interval": "",
+              "intervalFactor": 1,
+              "query": "SELECT\n    count() as cnt,\n    bankCountry,\n    cnt * 100 /(SELECT count() FROM fraud.payment WHERE toDate($from) <= timestamp and toDate($to) >= timestamp and $from <= toDateTime(eventTime) and $to >= toDateTime(eventTime) and match(partyId, '$partyId') and match(shopId, '$shopId')) as percent\nFROM fraud.payment\nWHERE\n    toDate($from) <= timestamp\n    and toDate($to) >= timestamp\n    and $from <= toDateTime(eventTime)\n    and $to >= toDateTime(eventTime)\n    and match(partyId, '$partyId')\n    and match(shopId, '$shopId')\n    and shopId != 'TEST'\nGROUP BY bankCountry\nORDER BY percent desc\nLIMIT 20",
+              "rawQuery": "SELECT     count() as cnt,     bankCountry,     cnt * 100 /(SELECT count() FROM fraud.payment WHERE toDate(1594117263) <= timestamp and toDate(1594128065) >= timestamp and 1594117263 <= toDateTime(eventTime) and 1594128065 >= toDateTime(eventTime) and match(partyId, '.') and match(shopId, '.')) as percent FROM fraud.payment WHERE     toDate(1594117263) <= timestamp     and toDate(1594128065) >= timestamp     and 1594117263 <= toDateTime(eventTime)     and 1594128065 >= toDateTime(eventTime)     and match(partyId, '.')     and match(shopId, '.')     and shopId != 'TEST' GROUP BY bankCountry ORDER BY percent desc LIMIT 20",
+              "refId": "A",
+              "round": "0s",
+              "table": "events_sink",
+              "tableLoading": false
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Top 20 country",
+          "type": "grafana-piechart-panel",
+          "valueName": "total"
+        },
+        {
+          "aliasColors": {},
+          "breakPoint": "50%",
+          "cacheTimeout": null,
+          "combine": {
+            "label": "Others",
+            "threshold": 0
+          },
+          "datasource": "ClickHouse",
+          "fontSize": "80%",
+          "format": "short",
+          "gridPos": {
+            "h": 9,
+            "w": 12,
+            "x": 0,
+            "y": 37
+          },
+          "id": 15,
+          "interval": null,
+          "legend": {
+            "percentage": true,
+            "show": true,
+            "sort": "total",
+            "sortDesc": true,
+            "values": true
+          },
+          "legendType": "Right side",
+          "links": [],
+          "maxDataPoints": 3,
+          "nullPointMode": "connected",
+          "options": {},
+          "pieType": "pie",
+          "strokeWidth": 1,
+          "targets": [
+            {
+              "database": "analytic",
+              "dateColDataType": "timestamp",
+              "dateLoading": false,
+              "dateTimeColDataType": "eventTime",
+              "dateTimeType": "DATETIME",
+              "datetimeLoading": false,
+              "extrapolate": true,
+              "format": "time_series",
+              "formattedQuery": "SELECT $timeSeries as t, count() FROM $table WHERE $timeFilter GROUP BY t ORDER BY t",
+              "interval": "",
+              "intervalFactor": 1,
+              "query": "SELECT\n    count() as cnt,\n    providerId,\n    cnt * 100 /(SELECT count() FROM fraud.payment WHERE toDate($from) <= timestamp and toDate($to) >= timestamp and $from <= toDateTime(eventTime) and $to >= toDateTime(eventTime) and match(partyId, '$partyId') and match(shopId, '$shopId')) as percent\nFROM fraud.payment\nWHERE\n    toDate($from) <= timestamp\n    and toDate($to) >= timestamp\n    and $from <= toDateTime(eventTime)\n    and $to >= toDateTime(eventTime)\n    and match(partyId, '$partyId')\n    and match(shopId, '$shopId')\n    and shopId != 'TEST'\nGROUP BY providerId\nORDER BY percent desc\nLIMIT 20",
+              "rawQuery": "SELECT     count() as cnt,     providerId,     cnt * 100 /(SELECT count() FROM fraud.payment WHERE toDate(1594117263) <= timestamp and toDate(1594128065) >= timestamp and 1594117263 <= toDateTime(eventTime) and 1594128065 >= toDateTime(eventTime) and match(partyId, '.') and match(shopId, '.')) as percent FROM fraud.payment WHERE     toDate(1594117263) <= timestamp     and toDate(1594128065) >= timestamp     and 1594117263 <= toDateTime(eventTime)     and 1594128065 >= toDateTime(eventTime)     and match(partyId, '.')     and match(shopId, '.')     and shopId != 'TEST' GROUP BY providerId ORDER BY percent desc LIMIT 20",
+              "refId": "A",
+              "round": "0s",
+              "table": "events_sink",
+              "tableLoading": false
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Provider activity",
+          "type": "grafana-piechart-panel",
+          "valueName": "total"
+        },
+        {
+          "aliasColors": {},
+          "breakPoint": "50%",
+          "cacheTimeout": null,
+          "combine": {
+            "label": "Others",
+            "threshold": 0
+          },
+          "datasource": "ClickHouse",
+          "fontSize": "80%",
+          "format": "short",
+          "gridPos": {
+            "h": 9,
+            "w": 12,
+            "x": 12,
+            "y": 37
+          },
+          "id": 12,
+          "interval": null,
+          "legend": {
+            "percentage": true,
+            "show": true,
+            "sort": "total",
+            "sortDesc": true,
+            "values": true
+          },
+          "legendType": "Right side",
+          "links": [],
+          "maxDataPoints": 3,
+          "nullPointMode": "connected",
+          "options": {},
+          "pieType": "pie",
+          "strokeWidth": 1,
+          "targets": [
+            {
+              "database": "analytic",
+              "dateColDataType": "timestamp",
+              "dateLoading": false,
+              "dateTimeColDataType": "eventTime",
+              "dateTimeType": "DATETIME",
+              "datetimeLoading": false,
+              "extrapolate": true,
+              "format": "time_series",
+              "formattedQuery": "SELECT $timeSeries as t, count() FROM $table WHERE $timeFilter GROUP BY t ORDER BY t",
+              "interval": "",
+              "intervalFactor": 1,
+              "query": "SELECT\n    count() as cnt,\n    paymentSystem,\n    cnt * 100 /(SELECT count() FROM fraud.payment WHERE toDate($from) <= timestamp and toDate($to) >= timestamp and $from <= toDateTime(eventTime) and $to >= toDateTime(eventTime) and match(partyId, '$partyId') and match(shopId, '$shopId')) as percent\nFROM fraud.payment\nWHERE\n    toDate($from) <= timestamp\n    and toDate($to) >= timestamp\n    and $from <= toDateTime(eventTime)\n    and $to >= toDateTime(eventTime)\n    and match(partyId, '$partyId')\n    and match(shopId, '$shopId')\n    and paymentSystem != ''\n    and shopId != 'TEST'\nGROUP BY paymentSystem\nORDER BY percent desc",
+              "rawQuery": "SELECT     count() as cnt,     paymentSystem,     cnt * 100 /(SELECT count() FROM fraud.payment WHERE toDate(1594117263) <= timestamp and toDate(1594128065) >= timestamp and 1594117263 <= toDateTime(eventTime) and 1594128065 >= toDateTime(eventTime) and match(partyId, '.') and match(shopId, '.')) as percent FROM fraud.payment WHERE     toDate(1594117263) <= timestamp     and toDate(1594128065) >= timestamp     and 1594117263 <= toDateTime(eventTime)     and 1594128065 >= toDateTime(eventTime)     and match(partyId, '.')     and match(shopId, '.')     and paymentSystem != ''     and shopId != 'TEST' GROUP BY paymentSystem ORDER BY percent desc",
+              "refId": "A",
+              "round": "0s",
+              "table": "events_sink",
+              "tableLoading": false
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Payment system activity",
+          "type": "grafana-piechart-panel",
+          "valueName": "total"
+        }
+      ],
+      "title": "Activity",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 17
+      },
+      "id": 7,
+      "panels": [
+        {
+          "aliasColors": {},
+          "breakPoint": "50%",
+          "cacheTimeout": null,
+          "combine": {
+            "label": "Others",
+            "threshold": 0
+          },
+          "datasource": "ClickHouse",
+          "fontSize": "80%",
+          "format": "short",
+          "gridPos": {
+            "h": 9,
+            "w": 12,
+            "x": 0,
+            "y": 18
+          },
+          "id": 4,
+          "interval": null,
+          "legend": {
+            "show": true,
+            "sort": "total",
+            "sortDesc": true,
+            "values": true
+          },
+          "legendType": "Right side",
+          "links": [],
+          "maxDataPoints": 3,
+          "nullPointMode": "connected",
+          "options": {},
+          "pieType": "pie",
+          "strokeWidth": 1,
+          "targets": [
+            {
+              "database": "analytic",
+              "dateColDataType": "timestamp",
+              "dateLoading": false,
+              "dateTimeColDataType": "eventTime",
+              "dateTimeType": "DATETIME",
+              "datetimeLoading": false,
+              "extrapolate": true,
+              "format": "time_series",
+              "formattedQuery": "SELECT $timeSeries as t, count() FROM $table WHERE $timeFilter GROUP BY t ORDER BY t",
+              "interval": "",
+              "intervalFactor": 1,
+              "query": "SELECT\n    count() as cnt,\n    errorCode\nFROM fraud.payment\nWHERE\n    toDate($from) <= timestamp\n    and toDate($to) >= timestamp\n    and $from <= toDateTime(eventTime)\n    and $to >= toDateTime(eventTime)\n    and status = 'failed'\n    and match(partyId, '$partyId')\n    and match(shopId, '$shopId')\n    and match(paymentCountry, '$paymentCountry')\n    and shopId != 'TEST'\nGROUP BY errorCode\nORDER BY cnt desc\nLIMIT 20",
+              "rawQuery": "SELECT     count() as cnt,     errorCode FROM fraud.payment WHERE     toDate(1594117417) <= timestamp     and toDate(1594128219) >= timestamp     and 1594117417 <= toDateTime(eventTime)     and 1594128219 >= toDateTime(eventTime)     and status = 'failed'     and match(partyId, '.')     and match(shopId, '.')     and match(paymentCountry, '.')     and shopId != 'TEST' GROUP BY errorCode ORDER BY cnt desc LIMIT 20",
+              "refId": "A",
+              "round": "0s",
+              "table": "events_sink",
+              "tableLoading": false
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Top 20 error",
+          "type": "grafana-piechart-panel",
+          "valueName": "total"
+        },
+        {
+          "aliasColors": {},
+          "breakPoint": "50%",
+          "cacheTimeout": null,
+          "combine": {
+            "label": "Others",
+            "threshold": 0
+          },
+          "datasource": "ClickHouse",
+          "decimals": null,
+          "fontSize": "80%",
+          "format": "short",
+          "gridPos": {
+            "h": 9,
+            "w": 12,
+            "x": 12,
+            "y": 18
+          },
+          "id": 16,
+          "interval": null,
+          "legend": {
+            "header": "",
+            "percentage": true,
+            "show": true,
+            "sort": "total",
+            "sortDesc": true,
+            "values": true
+          },
+          "legendType": "Right side",
+          "links": [],
+          "maxDataPoints": 3,
+          "nullPointMode": "connected",
+          "options": {},
+          "pieType": "pie",
+          "strokeWidth": 1,
+          "targets": [
+            {
+              "database": "fraud",
+              "dateColDataType": "timestamp",
+              "dateLoading": false,
+              "dateTimeColDataType": "eventTime",
+              "dateTimeType": "DATETIME",
+              "datetimeLoading": false,
+              "extrapolate": true,
+              "format": "time_series",
+              "formattedQuery": "SELECT $timeSeries as t, count() FROM $table WHERE $timeFilter GROUP BY t ORDER BY t",
+              "interval": "",
+              "intervalFactor": 1,
+              "query": "SELECT\n    count() as cnt,\n    checkedTemplate,\n    checkedRule,\n    bankCountry\nFROM fraud.events_unique\nWHERE\n    toDate($from) <= timestamp\n    and toDate($to) >= timestamp\n    and $from <= toDateTime(eventTime)\n    and $to >= toDateTime(eventTime)\n    and match(partyId, '$partyId')\n    and match(shopId, '$shopId')\n    and match(bankCountry, '$paymentCountry')\n    AND resultStatus = 'DECLINE'\n    and shopId != 'TEST'\nGROUP BY\n    checkedTemplate,\n    checkedRule,\n    bankCountry\nORDER BY cnt desc\nLIMIT 30",
+              "rawQuery": "SELECT     count() as cnt,     checkedTemplate,     checkedRule,     bankCountry FROM fraud.events_unique WHERE     toDate(1594117417) <= timestamp     and toDate(1594128219) >= timestamp     and 1594117417 <= toDateTime(eventTime)     and 1594128219 >= toDateTime(eventTime)     and match(partyId, '.')     and match(shopId, '.')     and match(bankCountry, '.')     AND resultStatus = 'DECLINE'     and shopId != 'TEST' GROUP BY     checkedTemplate,     checkedRule,     bankCountry ORDER BY cnt desc LIMIT 30",
+              "refId": "A",
+              "round": "0s",
+              "table": "events_unique",
+              "tableLoading": false
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Fraud Top 20 error",
+          "type": "grafana-piechart-panel",
+          "valueName": "total"
+        },
+        {
+          "aliasColors": {
+            "cancellRate": "light-orange",
+            "cancelled": "light-orange",
+            "cancelledRate": "semi-dark-yellow",
+            "captured": "semi-dark-green",
+            "failed": "semi-dark-red",
+            "failedRate": "semi-dark-red",
+            "fatalRate": "semi-dark-red",
+            "lowRate": "semi-dark-green"
+          },
+          "bars": true,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "ClickHouse",
+          "fill": 1,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 0,
+            "y": 27
+          },
+          "id": 2,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "max": true,
+            "min": false,
+            "rightSide": true,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": false,
+          "linewidth": 1,
+          "nullPointMode": "null",
+          "options": {
+            "dataLinks": []
+          },
+          "percentage": false,
+          "pointradius": 2,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "database": "analytic",
+              "dateColDataType": "timestamp",
+              "dateLoading": false,
+              "dateTimeColDataType": "eventTime",
+              "dateTimeType": "TIMESTAMP",
+              "datetimeLoading": false,
+              "extrapolate": true,
+              "format": "time_series",
+              "formattedQuery": "SELECT $timeSeries as t, count() FROM $table WHERE $timeFilter GROUP BY t ORDER BY t",
+              "interval": "",
+              "intervalFactor": 1,
+              "query": "SELECT\n    t,\n    low * 100 / all captured,\n    fatal * 100 / all failed,\n    cancell * 100 / all cancelled\nFROM\n(\n    SELECT\n        (intDiv(eventTime, 60) * 60) * 1000 AS t,\n        countIf(status = 'captured') AS low,\n        countIf(status = 'failed') AS fatal,\n        countIf(status = 'cancelled') AS cancell,\n        count() as all\n    FROM fraud.payment\n    WHERE\n        timestamp >= toDate($from)\n        and timestamp <= toDate($to)\n        AND eventTime >= $from\n        and eventTime <= $to\n        and match(partyId, '$partyId')\n        and match(shopId, '$shopId')\n        and shopId!='TEST'\n    GROUP BY t\n    ORDER BY t\n)",
+              "rawQuery": "SELECT     t,     low * 100 / all captured,     fatal * 100 / all failed,     cancell * 100 / all cancelled FROM (     SELECT         (intDiv(eventTime, 60) * 60) * 1000 AS t,         countIf(status = 'captured') AS low,         countIf(status = 'failed') AS fatal,         countIf(status = 'cancelled') AS cancell,         count() as all     FROM fraud.payment     WHERE         timestamp >= toDate(1594117417)         and timestamp <= toDate(1594128219)         AND eventTime >= 1594117417         and eventTime <= 1594128219         and match(partyId, '.')         and match(shopId, '.')         and shopId!='TEST'     GROUP BY t     ORDER BY t )",
+              "refId": "A",
+              "round": "0s",
+              "table": "events_sink",
+              "tableLoading": false
+            }
+          ],
+          "thresholds": [],
+          "timeFrom": null,
+          "timeRegions": [],
+          "timeShift": null,
+          "title": "Success rate",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "format": "percent",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            },
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            }
+          ],
+          "yaxis": {
+            "align": false,
+            "alignLevel": null
+          }
+        },
+        {
+          "aliasColors": {
+            "cancelledRate": "semi-dark-yellow",
+            "failedRate": "semi-dark-red",
+            "fatalRate": "semi-dark-red",
+            "fraud": "semi-dark-red",
+            "normal": "semi-dark-green"
+          },
+          "bars": true,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "ClickHouse",
+          "fill": 1,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 12,
+            "y": 27
+          },
+          "id": 22,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "max": true,
+            "min": false,
+            "rightSide": true,
+            "show": true,
+            "total": false,
+            "values": true
+          },
+          "lines": false,
+          "linewidth": 1,
+          "nullPointMode": "null",
+          "options": {
+            "dataLinks": []
+          },
+          "percentage": false,
+          "pointradius": 2,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [],
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "database": "analytic",
+              "dateColDataType": "timestamp",
+              "dateLoading": false,
+              "dateTimeColDataType": "eventTime",
+              "dateTimeType": "TIMESTAMP",
+              "datetimeLoading": false,
+              "extrapolate": true,
+              "format": "time_series",
+              "formattedQuery": "SELECT $timeSeries as t, count() FROM $table WHERE $timeFilter GROUP BY t ORDER BY t",
+              "interval": "",
+              "intervalFactor": 1,
+              "query": "SELECT\n    t,\n    low * 100 / all normal,\n    fatal * 100 / all fraud\nFROM\n(\n    SELECT\n        (intDiv(eventTime, 60) * 60) * 1000 AS t,\n        countIf(status = 'captured' or status='cancelled') AS low,\n        countIf(status = 'failed' and errorCode='no_route_found:risk_score_is_too_high') AS fatal,\n        count() as all\n    FROM fraud.payment\n    WHERE\n        timestamp >= toDate($from)\n        and timestamp <= toDate($to)\n        AND eventTime >= $from\n        and eventTime <= $to\n        and match(partyId, '$partyId')\n        and match(shopId, '$shopId')\n        and shopId!='TEST'\n    GROUP BY t\n    ORDER BY t\n)",
+              "rawQuery": "SELECT     t,     low * 100 / all normal,     fatal * 100 / all fraud FROM (     SELECT         (intDiv(eventTime, 60) * 60) * 1000 AS t,         countIf(status = 'captured' or status='cancelled') AS low,         countIf(status = 'failed' and errorCode='no_route_found:risk_score_is_too_high') AS fatal,         count() as all     FROM fraud.payment     WHERE         timestamp >= toDate(1594117417)         and timestamp <= toDate(1594128219)         AND eventTime >= 1594117417         and eventTime <= 1594128219         and match(partyId, '.')         and match(shopId, '.')         and shopId!='TEST'     GROUP BY t     ORDER BY t )",
+              "refId": "A",
+              "round": "0s",
+              "table": "events_sink",
+              "tableLoading": false
+            }
+          ],
+          "thresholds": [],
+          "timeFrom": null,
+          "timeRegions": [],
+          "timeShift": null,
+          "title": "Fraud rate",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "format": "percent",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            },
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            }
+          ],
+          "yaxis": {
+            "align": false,
+            "alignLevel": null
+          }
+        }
+      ],
+      "title": "Errors and country",
+      "type": "row"
+    }
+  ],
+  "refresh": false,
+  "schemaVersion": 16,
+  "style": "dark",
+  "tags": [],
+  "templating": {
+    "list": [
+      {
+        "current": {
+          "value": "${VAR_PARTYID}",
+          "text": "${VAR_PARTYID}"
+        },
+        "hide": 0,
+        "label": "partyId",
+        "name": "partyId",
+        "options": [
+          {
+            "value": "${VAR_PARTYID}",
+            "text": "${VAR_PARTYID}"
+          }
+        ],
+        "query": "${VAR_PARTYID}",
+        "skipUrlSync": false,
+        "type": "constant"
+      },
+      {
+        "current": {
+          "value": "${VAR_SHOPID}",
+          "text": "${VAR_SHOPID}"
+        },
+        "hide": 0,
+        "label": "shopId",
+        "name": "shopId",
+        "options": [
+          {
+            "value": "${VAR_SHOPID}",
+            "text": "${VAR_SHOPID}"
+          }
+        ],
+        "query": "${VAR_SHOPID}",
+        "skipUrlSync": false,
+        "type": "constant"
+      },
+      {
+        "current": {
+          "value": "${VAR_PAYMENTCOUNTRY}",
+          "text": "${VAR_PAYMENTCOUNTRY}"
+        },
+        "hide": 0,
+        "label": "paymentCountry",
+        "name": "paymentCountry",
+        "options": [
+          {
+            "value": "${VAR_PAYMENTCOUNTRY}",
+            "text": "${VAR_PAYMENTCOUNTRY}"
+          }
+        ],
+        "query": "${VAR_PAYMENTCOUNTRY}",
+        "skipUrlSync": false,
+        "type": "constant"
+      },
+      {
+        "current": {
+          "value": "${VAR_BIN}",
+          "text": "${VAR_BIN}"
+        },
+        "hide": 0,
+        "label": "bin",
+        "name": "bin",
+        "options": [
+          {
+            "value": "${VAR_BIN}",
+            "text": "${VAR_BIN}"
+          }
+        ],
+        "query": "${VAR_BIN}",
+        "skipUrlSync": false,
+        "type": "constant"
+      }
+    ]
+  },
+  "time": {
+    "from": "now-3h",
+    "to": "now"
+  },
+  "timepicker": {
+    "refresh_intervals": [
+      "5s",
+      "10s",
+      "30s",
+      "1m",
+      "5m",
+      "15m",
+      "30m",
+      "1h",
+      "2h",
+      "1d"
+    ],
+    "time_options": [
+      "5m",
+      "15m",
+      "1h",
+      "6h",
+      "12h",
+      "24h",
+      "2d",
+      "7d",
+      "30d"
+    ]
+  },
+  "timezone": "",
+  "title": "Analytics antifraud metrcis",
+  "uid": "VtJP3auWk",
+  "version": 20
+}
