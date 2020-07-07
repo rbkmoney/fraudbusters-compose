@@ -12,9 +12,15 @@ When analyzing the results, it enriches the data from the storage location servi
 
 ![alt text](images/fb_scheme.png)
 
-### Install
+### Run
 
 ```docker-compose up -d```
+
+### Service live at:
+
+ - Grafana (http://localhost:3000) - admin/admin
+ - Swagger for fraudbusters management (http://localhost:8080/fb-management/v1/swagger-ui.html)
+ - Thrift proxy inspector proto fraudbusters (http://localhost:8022/...)
 
 ### License
 [Apache 2.0 License.](/LICENSE)
