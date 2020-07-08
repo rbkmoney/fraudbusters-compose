@@ -79,6 +79,9 @@ services:
      image: yandex/clickhouse-server:19.17
      hostname: clickhouse
      container_name: clickhouse
+     environment:
+       CLICKHOUSE_USER: user
+       CLICKHOUSE_PASSWORD: password
      ports:
        - 9000:9000
        - 8123:8123
@@ -145,7 +148,7 @@ services:
        - 8991:8022
 
    fraudbusters:
-     image: dr2.rbkmoney.com/rbkmoney/fraudbusters:e4b2f9e830890a8956d17b6a0599a4ba2ebb1c1c
+     image: dr2.rbkmoney.com/rbkmoney/fraudbusters:53d558563fa72966ad5a8b40782b0cebc1defd9f
      hostname: fraudbusters
      container_name: fraudbusters
      environment:
@@ -155,11 +158,13 @@ services:
        clickhouse.db.url: "jdbc:clickhouse://clickhouse:8123/default"
        spring.profiles.active: "full-prod"
        logging.config: "tmp/logback-test.xml"
+       clickhouse.db.user: ''
+       clickhouse.db.password: ''
      depends_on:
        - clickhouse
        - broker
-       - columbus
-       - wblist
+#       - columbus
+#       - wblist
        - kafka-setup
      ports:
        - 8999:8022
