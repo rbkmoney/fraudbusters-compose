@@ -163,8 +163,8 @@ services:
      depends_on:
        - clickhouse
        - broker
-#       - columbus
-#       - wblist
+       - columbus
+       - wblist
        - kafka-setup
      ports:
        - 8999:8022
