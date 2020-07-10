@@ -104,7 +104,7 @@ services:
        - ./grafana/datasources:/etc/grafana/provisioning/datasources
 
    postgres-columbus:
-    image: dr2.rbkmoney.com/rbkmoney/postgres-geodata:0758740c8c3f350ddd7a8331b5e1cbb0374f4832
+    image: rbkmoney/postgres-geodata:0eb52256576ec22f89fadc3e7fe505b692e838a3
     hostname: postgres-columbus
     container_name: postgres-columbus
     environment:
@@ -118,7 +118,7 @@ services:
       - 5432:5432
 
    columbus:
-    image: dr2.rbkmoney.com/rbkmoney/columbus:79a03704da4b17afa6f6ce07dbd3522fd5a52442
+    image: rbkmoney/columbus:88be0cbccde15c7d4c88403d495f8d564f826160
     hostname: columbus
     container_name: columbus
     environment:
@@ -130,7 +130,7 @@ services:
       - 8990:8022
 
    wblist:
-     image: dr2.rbkmoney.com/rbkmoney/wb-list-manager:d5ee1b86445e20f45d0271f86696446f57fc829b
+     image: rbkmoney/wb-list-manager:dc7f451945194441357177fd3153ac82a0333eac
      hostname: wblist
      container_name: wblist
      environment:
@@ -148,7 +148,7 @@ services:
        - 8991:8022
 
    fraudbusters:
-     image: dr2.rbkmoney.com/rbkmoney/fraudbusters:53d558563fa72966ad5a8b40782b0cebc1defd9f
+     image: rbkmoney/fraudbusters:deea70133e6de41b6a46194b210ae7c3b313a1a8
      hostname: fraudbusters
      container_name: fraudbusters
      environment:
@@ -185,7 +185,7 @@ services:
      restart: unless-stopped
 
    fb-management:
-     image: dr2.rbkmoney.com/rbkmoney/fraudbusters-management:ecb5272c2c5920d4911959e3ec2b90e90c07377d
+     image: rbkmoney/fraudbusters-management:8022324b0f39d9da43db1911f5b7565617315a77
      hostname: fb-management
      container_name: fb-management
      environment:
