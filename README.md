@@ -14,7 +14,9 @@ When analyzing the results, it enriches the data from the storage location servi
 
 ### Run
 
-```docker-compose up -d```
+1. ```docker-compose up -d```
+
+2. [Simple use case](docs/simple_use_case_1.md)
 
 ### Service live at:
 

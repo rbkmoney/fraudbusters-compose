@@ -148,7 +148,7 @@ services:
        - 8991:8022
 
    fraudbusters:
-     image: rbkmoney/fraudbusters:deea70133e6de41b6a46194b210ae7c3b313a1a8
+     image: rbkmoney/fraudbusters:f22dfe7ba431891ebf59cf18909f9557e6c042ce
      hostname: fraudbusters
      container_name: fraudbusters
      environment:
@@ -156,7 +156,6 @@ services:
        geo.ip.service.url: "http://columbus:8022/repo"
        wb.list.service.url: "http://wblist:8022/v1/wb_list"
        clickhouse.db.url: "jdbc:clickhouse://clickhouse:8123/default"
-       spring.profiles.active: "full-prod"
        logging.config: "tmp/logback-test.xml"
        clickhouse.db.user: ''
        clickhouse.db.password: ''
@@ -185,7 +184,7 @@ services:
      restart: unless-stopped
 
    fb-management:
-     image: rbkmoney/fraudbusters-management:8022324b0f39d9da43db1911f5b7565617315a77
+     image: rbkmoney/fraudbusters-management:f69a76582af1479c51402f8b395c79274a9b3cd8
      hostname: fb-management
      container_name: fb-management
      environment:
@@ -197,7 +196,7 @@ services:
        spring.datasource.url: "jdbc:postgresql://postgres-fb:5432/wblist"
        logging.config: "./tmp/logback-test.xml"
        management.metrics.binders.jvm.enabled: 'false'
-       service.validate.payment.url: 'http://fraudbusters:8022/fraud_payment/v1/'
+       service.payment.url: 'http://fraudbusters:8022/fraud_payment/v1/'
      depends_on:
        - fraudbusters
        - broker
