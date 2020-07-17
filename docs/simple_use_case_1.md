@@ -1,6 +1,6 @@
 ## Simple use case
 
-    ![alt text](../images/fraudbusters sequence diagram.png)
+![alt text](../images/fraudbusters_sequence_diagram.png)
 
 1. Check all containers is running
 2. Open swagger api http://localhost:8080/fb-management/v1/swagger-ui.html
