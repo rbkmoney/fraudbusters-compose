@@ -148,7 +148,7 @@ services:
        - 8991:8022
 
    fraudbusters:
-     image: rbkmoney/fraudbusters:9e5546d61d510adb69726c1f6cb3c7a6cc1574f5
+     image: rbkmoney/fraudbusters:937d4163815a2f78ba883e07e952178988bbd1f8
      hostname: fraudbusters
      container_name: fraudbusters
      environment:
@@ -159,6 +159,9 @@ services:
        logging.config: "tmp/logback-test.xml"
        clickhouse.db.user: ''
        clickhouse.db.password: ''
+       fraud.management.url: 'fb-management:8080'
+       result.full.check.enabled: 'false'
+       spring.profiles.active: 'full-prod'
      depends_on:
        - clickhouse
        - broker
@@ -184,7 +187,7 @@ services:
      restart: unless-stopped
 
    fb-management:
-     image: rbkmoney/fraudbusters-management:4f7a141ac8e1cd4b69841448dfa6be5416f5f7bb
+     image: rbkmoney/fraudbusters-management:d04fe852af405a6d498e88602a6830e063ebb96f
      hostname: fb-management
      container_name: fb-management
      environment:
@@ -203,10 +206,20 @@ services:
        - wblist
        - postgres-fb
        - kafka-setup
-     ports:
-       - 8080:8080
      volumes:
        - ./log-java:/opt/fraudbusters-management/tmp
+
+   fraudbusters-ui:
+     image: dr2.rbkmoney.com/rbkmoney/fraudbusters-ui:26afabe9b4e2e4774cfca1f42dc1e9f9c83d40e0
+     hostname: fraudbusters-ui
+     container_name: fraudbusters-ui
+     ports:
+       - 8989:8080
+     depends_on:
+       - fb-management
+     volumes:
+       - ./fraudbusters-ui/nginx.conf:/etc/nginx/vhosts.d/fraudbusters-ui.conf
+       - ./fraudbusters-ui//appConfig.json:/usr/share/nginx/html/fraudbusters-ui/assets/appConfig.json
 
 networks:
   default:
