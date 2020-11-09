@@ -88,41 +88,48 @@ clickhouse client -n <<-EOSQL
 
     CREATE DATABASE IF NOT EXISTS fraud;
 
-    DROP TABLE IF EXISTS fraud.fraud_payment;
+    CREATE DATABASE IF NOT EXISTS fraud;
 
-    create table fraud.fraud_payment (
+DROP TABLE IF EXISTS fraud.fraud_payment;
 
-      timestamp Date,
-      id String,
-      eventTime String,
+create table fraud.fraud_payment (
 
-      partyId String,
-      shopId String,
+timestamp Date,
+  id String,
+  eventTime UInt64,
+  eventTimeHour UInt64,
 
-      amount UInt64,
-      currency String,
+  fraudType String,
+  comment String,
 
-      payerType String,
-      paymentToolType String,
-      cardToken String,
-      paymentSystem String,
-      maskedPan String,
-      issuerCountry String,
-      email String,
-      ip String,
-      fingerprint String,
-      status String,
-      rrn String,
+    email                 String,
+    ip                    String,
+    fingerprint           String,
 
-      providerId UInt32,
-      terminalId UInt32,
+    bin                   String,
+    maskedPan             String,
+    cardToken             String,
+    paymentSystem         String,
+    paymentTool           String,
 
-      tempalateId String,
-      description String
+    terminal              String,
+    providerId            String,
+    bankCountry           String,
 
-    ) ENGINE = MergeTree()
-    PARTITION BY toYYYYMM (timestamp)
-    ORDER BY (partyId, shopId, paymentToolType, status, currency, providerId, fingerprint, cardToken, id);
+    partyId               String,
+    shopId                String,
+
+    amount                UInt64,
+    currency              String,
+
+    status                Enum8('pending' = 1, 'processed' = 2, 'captured' = 3, 'cancelled' = 4, 'failed' = 5),
+    errorReason           String,
+    errorCode             String,
+    paymentCountry        String
+) ENGINE = MergeTree()
+PARTITION BY toYYYYMM (timestamp)
+ORDER BY (eventTimeHour, partyId, shopId, paymentTool, status, currency, providerId, fingerprint, cardToken, eventTime, id);
+
 
     DROP TABLE IF EXISTS fraud.refund;
 
@@ -365,195 +372,4 @@ clickhouse client -n <<-EOSQL
 
     ALTER TABLE fraud.chargeback ADD COLUMN payerType String;
     ALTER TABLE fraud.chargeback ADD COLUMN tokenProvider String;
-
-    DROP TABLE IF EXISTS fraud.fraud_payment;
-
-    create table fraud.fraud_payment (
-
-      timestamp Date,
-      id String,
-      eventTime String,
-
-      fraudType String,
-      comment String
-    ) ENGINE = MergeTree()
-    PARTITION BY toYYYYMM (timestamp)
-    ORDER BY (eventTime, id);
-
-    ALTER TABLE fraud.payment ADD COLUMN checkedTemplate String;
-    ALTER TABLE fraud.payment ADD COLUMN checkedRule String;
-    ALTER TABLE fraud.payment ADD COLUMN resultStatus String;
-
-    ALTER TABLE fraud.payment ADD COLUMN checkedResultsJson String;
-
-    ALTER TABLE fraud.events_unique ADD COLUMN mobile UInt8;
-    ALTER TABLE fraud.events_unique ADD COLUMN recurrent UInt8;
-
-    ALTER TABLE fraud.payment ADD COLUMN mobile UInt8;
-    ALTER TABLE fraud.payment ADD COLUMN recurrent UInt8;
-
-    DROP TABLE IF EXISTS fraud.fraud_payment_full;
-
-create table fraud.fraud_payment_full (
-
-  timestamp Date,
-  id String,
-  eventTime UInt64,
-  eventTimeHour UInt64,
-
-  fraudType String,
-  comment String,
-
-    email                 String,
-    ip                    String,
-    fingerprint           String,
-
-    bin                   String,
-    maskedPan             String,
-    cardToken             String,
-    paymentSystem         String,
-    paymentTool           String,
-
-    terminal              String,
-    providerId            String,
-    bankCountry           String,
-
-    partyId               String,
-    shopId                String,
-
-    amount                UInt64,
-    currency              String,
-
-    status                Enum8('pending' = 1, 'processed' = 2, 'captured' = 3, 'cancelled' = 4, 'failed' = 5),
-    errorReason           String,
-    errorCode             String,
-    paymentCountry        String
-) ENGINE = MergeTree()
-PARTITION BY toYYYYMM (timestamp)
-ORDER BY (eventTimeHour, partyId, shopId, paymentTool, status, currency, providerId, fingerprint, cardToken, eventTime, id);
-
-DROP TABLE IF EXISTS fraud.fraud_payment_mv;
-
-CREATE MATERIALIZED VIEW fraud.fraud_payment_mv
-TO fraud.fraud_payment_full AS
-SELECT
-  timestamp,
-  eventTime,
-  eventTimeHour,
-  id,
-  fraudType ,
-  comment,
-
-  email,
-  ip,
-  fingerprint,
-  bin,
-  maskedPan,
-  cardToken,
-  paymentSystem,
-  paymentTool,
-  terminal,
-  providerId,
-  bankCountry,
-  partyId,
-  shopId,
-  amount,
-  currency,
-  status,
-  errorReason,
-  errorCode,
-  paymentCountry
-FROM (
-  SELECT DISTINCT
-      fraud.payment.timestamp as timestamp,
-      fraud.payment.eventTime as eventTime,
-      fraud.payment.eventTimeHour as eventTimeHour,
-
-      id,
-      fraudType ,
-      comment,
-
-      email,
-      ip,
-      fingerprint,
-      bin,
-      maskedPan,
-      cardToken,
-      paymentSystem,
-      paymentTool,
-      terminal,
-      providerId,
-      bankCountry,
-      partyId,
-      shopId,
-      amount,
-      currency,
-      status,
-      errorReason,
-      errorCode,
-      paymentCountry
-  FROM fraud.fraud_payment LEFT JOIN fraud.payment USING(timestamp , id)
-  where status = 'captured'
-)
-
-CREATE VIEW fraud.fraud_payment_view AS
-SELECT
-  timestamp,
-  eventTime,
-  eventTimeHour,
-  id,
-  fraudType ,
-  comment,
-
-  email,
-  ip,
-  fingerprint,
-  bin,
-  maskedPan,
-  cardToken,
-  paymentSystem,
-  paymentTool,
-  terminal,
-  providerId,
-  bankCountry,
-  partyId,
-  shopId,
-  amount,
-  currency,
-  status,
-  errorReason,
-  errorCode,
-  paymentCountry
-FROM (
-  SELECT DISTINCT
-      timestamp,
-      fraud.payment.eventTime as eventTime,
-      fraud.payment.eventTimeHour as eventTimeHour,
-
-      id,
-      fraudType ,
-      comment,
-
-      email,
-      ip,
-      fingerprint,
-      bin,
-      maskedPan,
-      cardToken,
-      paymentSystem,
-      paymentTool,
-      terminal,
-      providerId,
-      bankCountry,
-      partyId,
-      shopId,
-      amount,
-      currency,
-      status,
-      errorReason,
-      errorCode,
-      paymentCountry
-  FROM fraud.fraud_payment LEFT JOIN fraud.payment USING(timestamp , id)
-  where status = 'captured'
-)
 EOSQL

@@ -102,35 +102,35 @@ services:
      volumes:
        - ./grafana/dashboards:/etc/grafana/provisioning/dashboards
        - ./grafana/datasources:/etc/grafana/provisioning/datasources
-
-   postgres-columbus:
-    image: rbkmoney/postgres-geodata:0eb52256576ec22f89fadc3e7fe505b692e838a3
-    hostname: postgres-columbus
-    container_name: postgres-columbus
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: columbus
-    entrypoint:
-      - /docker-entrypoint.sh
-      - postgres
-    ports:
-      - 5432:5432
-
-   columbus:
-    image: rbkmoney/columbus:88be0cbccde15c7d4c88403d495f8d564f826160
-    hostname: columbus
-    container_name: columbus
-    environment:
-      spring.datasource.url: "jdbc:postgresql://postgres-columbus:5432/columbus"
-      logging.level.com.rbkmoney.woody: "ERROR"
-    depends_on:
-      - postgres-columbus
-    ports:
-      - 8990:8022
+#
+#   postgres-columbus:
+#    image: rbkmoney/postgres-geodata:0eb52256576ec22f89fadc3e7fe505b692e838a3
+#    hostname: postgres-columbus
+#    container_name: postgres-columbus
+#    environment:
+#      POSTGRES_USER: postgres
+#      POSTGRES_PASSWORD: postgres
+#      POSTGRES_DB: columbus
+#    entrypoint:
+#      - /docker-entrypoint.sh
+#      - postgres
+#    ports:
+#      - 5432:5432
+#
+#   columbus:
+#    image: rbkmoney/columbus:88be0cbccde15c7d4c88403d495f8d564f826160
+#    hostname: columbus
+#    container_name: columbus
+#    environment:
+#      spring.datasource.url: "jdbc:postgresql://postgres-columbus:5432/columbus"
+#      logging.level.com.rbkmoney.woody: "ERROR"
+#    depends_on:
+#      - postgres-columbus
+#    ports:
+#      - 8990:8022
 
    wblist:
-     image: rbkmoney/wb-list-manager:dc7f451945194441357177fd3153ac82a0333eac
+     image: rbkmoney/wb-list-manager:4e1ef72046a43afaa24b34e4e537eef7e2761c74
      hostname: wblist
      container_name: wblist
      environment:
@@ -148,10 +148,12 @@ services:
        - 8991:8022
 
    fraudbusters:
-     image: rbkmoney/fraudbusters:937d4163815a2f78ba883e07e952178988bbd1f8
+     image: rbkmoney/fraudbusters:76d8c96af2313a04ff03587edc67f1494f426f32
      hostname: fraudbusters
      container_name: fraudbusters
      environment:
+       management.security.enabled: 'false'
+       kafka.ssl.enable: 'false'
        kafka.bootstrap.servers: "broker:9092"
        geo.ip.service.url: "http://columbus:8022/repo"
        wb.list.service.url: "http://wblist:8022/v1/wb_list"
@@ -165,7 +167,7 @@ services:
      depends_on:
        - clickhouse
        - broker
-       - columbus
+#       - columbus
        - wblist
        - kafka-setup
      ports:
@@ -187,7 +189,7 @@ services:
      restart: unless-stopped
 
    fb-management:
-     image: rbkmoney/fraudbusters-management:d04fe852af405a6d498e88602a6830e063ebb96f
+     image: rbkmoney/fraudbusters-management:c1d1d6c1fd351103897b327638b6f3f15f8dfd0e
      hostname: fb-management
      container_name: fb-management
      environment:
@@ -200,26 +202,29 @@ services:
        logging.config: "./tmp/logback-test.xml"
        management.metrics.binders.jvm.enabled: 'false'
        service.payment.url: 'http://fraudbusters:8022/fraud_payment/v1/'
+       spring.profiles.active: 'debug'
+     ports:
+       - 8080:8080
      depends_on:
        - fraudbusters
        - broker
-       - wblist
+#       - wblist
        - postgres-fb
        - kafka-setup
      volumes:
        - ./log-java:/opt/fraudbusters-management/tmp
 
-   fraudbusters-ui:
-     image: dr2.rbkmoney.com/rbkmoney/fraudbusters-ui:26afabe9b4e2e4774cfca1f42dc1e9f9c83d40e0
-     hostname: fraudbusters-ui
-     container_name: fraudbusters-ui
-     ports:
-       - 8989:8080
-     depends_on:
-       - fb-management
-     volumes:
-       - ./fraudbusters-ui/nginx.conf:/etc/nginx/vhosts.d/fraudbusters-ui.conf
-       - ./fraudbusters-ui//appConfig.json:/usr/share/nginx/html/fraudbusters-ui/assets/appConfig.json
+#   fraudbusters-ui:
+#     image: dr2.rbkmoney.com/rbkmoney/fraudbusters-ui:0db72f55e6073827df8abcf93a548c4446ee4c78
+#     hostname: fraudbusters-ui
+#     container_name: fraudbusters-ui
+#     ports:
+#       - 8989:8080
+#     depends_on:
+#       - fb-management
+#     volumes:
+#       - ./fraudbusters-ui/nginx.conf:/etc/nginx/vhosts.d/fraudbusters-ui.conf
+#       - ./fraudbusters-ui/appConfig.json:/usr/share/nginx/html/assets/appConfig.json
 
 networks:
   default:
