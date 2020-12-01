@@ -31,6 +31,9 @@ services:
        CONFLUENT_METRICS_REPORTER_TOPIC_REPLICAS: 1
        CONFLUENT_METRICS_ENABLE: 'true'
        CONFLUENT_SUPPORT_CUSTOMER_ID: 'anonymous'
+     ports:
+       - 9092:9092
+       - 29092:29092
      volumes:
        - /tmp/docker/kafka2/data:/var/lib/kafka/data
 
@@ -74,34 +77,34 @@ services:
        - "com.basho.riak.cluster.name=riakts"
      volumes:
        - /tmp/docker/riak/data:/etc/riak/schemas
+#
+#   clickhouse:
+#     image: yandex/clickhouse-server:19.17
+#     hostname: clickhouse
+#     container_name: clickhouse
+#     environment:
+#       CLICKHOUSE_USER: user
+#       CLICKHOUSE_PASSWORD: password
+#     ports:
+#       - 9000:9000
+#       - 8123:8123
+#     volumes:
+#       - ./clickhouse/data:/var/lib/clickhouse
+#       - ./clickhouse/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
 
-   clickhouse:
-     image: yandex/clickhouse-server:19.17
-     hostname: clickhouse
-     container_name: clickhouse
-     environment:
-       CLICKHOUSE_USER: user
-       CLICKHOUSE_PASSWORD: password
-     ports:
-       - 9000:9000
-       - 8123:8123
-     volumes:
-       - ./clickhouse/data:/var/lib/clickhouse
-       - ./clickhouse/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
-
-   grafana:
-     image: grafana/grafana:5.1.0
-     hostname: grafana
-     container_name: grafana
-     ports:
-       - 3000:3000
-     environment:
-       GF_INSTALL_PLUGINS: "grafana-piechart-panel,vertamedia-clickhouse-datasource"
-       GF_SECURITY_ADMIN_USER: "admin"
-       GF_SECURITY_ADMIN_PASSWORD: "admin"
-     volumes:
-       - ./grafana/dashboards:/etc/grafana/provisioning/dashboards
-       - ./grafana/datasources:/etc/grafana/provisioning/datasources
+#   grafana:
+#     image: grafana/grafana:5.1.0
+#     hostname: grafana
+#     container_name: grafana
+#     ports:
+#       - 3000:3000
+#     environment:
+#       GF_INSTALL_PLUGINS: "grafana-piechart-panel,vertamedia-clickhouse-datasource"
+#       GF_SECURITY_ADMIN_USER: "admin"
+#       GF_SECURITY_ADMIN_PASSWORD: "admin"
+#     volumes:
+#       - ./grafana/dashboards:/etc/grafana/provisioning/dashboards
+#       - ./grafana/datasources:/etc/grafana/provisioning/datasources
 #
 #   postgres-columbus:
 #    image: rbkmoney/postgres-geodata:0eb52256576ec22f89fadc3e7fe505b692e838a3
@@ -129,26 +132,26 @@ services:
 #    ports:
 #      - 8990:8022
 
-   wblist:
-     image: rbkmoney/wb-list-manager:4e1ef72046a43afaa24b34e4e537eef7e2761c74
-     hostname: wblist
-     container_name: wblist
-     environment:
-       kafka.bootstrap.servers: "broker:9092"
-       riak.address: riak
-       riak.port: 8087
-       management.metrics.export.statsd.enabled: "false"
-       logging.level.com.rbkmoney.woody: "ERROR"
-       kafka.wblist.topic.command: "wb-list-command"
-       kafka.wblist.topic.event.sink: "wb-list-event-sink"
-     depends_on:
-       - riak
-       - broker
-     ports:
-       - 8991:8022
+#   wblist:
+#     image: rbkmoney/wb-list-manager:4e1ef72046a43afaa24b34e4e537eef7e2761c74
+#     hostname: wblist
+#     container_name: wblist
+#     environment:
+#       kafka.bootstrap.servers: "broker:9092"
+#       riak.address: riak
+#       riak.port: 8087
+#       management.metrics.export.statsd.enabled: "false"
+#       logging.level.com.rbkmoney.woody: "ERROR"
+#       kafka.wblist.topic.command: "wb-list-command"
+#       kafka.wblist.topic.event.sink: "wb-list-event-sink"
+#     depends_on:
+#       - riak
+#       - broker
+#     ports:
+#       - 8991:8022
 
    fraudbusters:
-     image: rbkmoney/fraudbusters:76d8c96af2313a04ff03587edc67f1494f426f32
+     image: rbkmoney/fraudbusters:f27dda2cc1e7bc26c0ec4135799a64539b158e0f
      hostname: fraudbusters
      container_name: fraudbusters
      environment:
@@ -165,10 +168,10 @@ services:
        result.full.check.enabled: 'false'
        spring.profiles.active: 'full-prod'
      depends_on:
-       - clickhouse
+#       - clickhouse
        - broker
 #       - columbus
-       - wblist
+#       - wblist
        - kafka-setup
      ports:
        - 8999:8022
@@ -182,14 +185,16 @@ services:
      environment:
        POSTGRES_USER: postgres
        POSTGRES_PASSWORD: postgres
-       POSTGRES_DB: wblist
+       POSTGRES_DB: fraudbusters
        PGDATA: /data/postgres
+     ports:
+       - 5432:5432
      volumes:
         - ./postgres/data/3:/data/postgres
      restart: unless-stopped
 
    fb-management:
-     image: rbkmoney/fraudbusters-management:c1d1d6c1fd351103897b327638b6f3f15f8dfd0e
+     image: dr2.rbkmoney.com/rbkmoney/fraudbusters-management:10bffe1b7fd0f8a918cfadd81424c78ea09594e8
      hostname: fb-management
      container_name: fb-management
      environment:
@@ -198,13 +203,16 @@ services:
        kafka.wblist.topic.event.sink: "wb-list-event-sink"
        kafka.fraudbusters.template: "template"
        kafka.fraudbusters.reference: "template_reference"
-       spring.datasource.url: "jdbc:postgresql://postgres-fb:5432/wblist"
+       spring.datasource.url: "jdbc:postgresql://postgres-fb:5432/fraudbusters"
        logging.config: "./tmp/logback-test.xml"
        management.metrics.binders.jvm.enabled: 'false'
        service.payment.url: 'http://fraudbusters:8022/fraud_payment/v1/'
        spring.profiles.active: 'debug'
+       keycloak.enabled: "true"
+       keycloak.auth-server-url: "http://keyclock:8080/auth"
+       cors.allowed-origins: "*"
      ports:
-       - 8080:8080
+       - 8085:8081
      depends_on:
        - fraudbusters
        - broker
@@ -214,17 +222,28 @@ services:
      volumes:
        - ./log-java:/opt/fraudbusters-management/tmp
 
-#   fraudbusters-ui:
-#     image: dr2.rbkmoney.com/rbkmoney/fraudbusters-ui:0db72f55e6073827df8abcf93a548c4446ee4c78
-#     hostname: fraudbusters-ui
-#     container_name: fraudbusters-ui
-#     ports:
-#       - 8989:8080
-#     depends_on:
-#       - fb-management
-#     volumes:
-#       - ./fraudbusters-ui/nginx.conf:/etc/nginx/vhosts.d/fraudbusters-ui.conf
-#       - ./fraudbusters-ui/appConfig.json:/usr/share/nginx/html/assets/appConfig.json
+   fraudbusters-ui:
+     image: dr2.rbkmoney.com/rbkmoney/fraudbusters-ui:71f7f7f54ad465a4ac7f3b76976a5625972d123a
+     hostname: fraudbusters-ui
+     container_name: fraudbusters-ui
+     ports:
+       - 8989:8080
+     depends_on:
+       - fb-management
+     volumes:
+       - ./fraudbusters-ui/nginx.conf:/etc/nginx/vhosts.d/fraudbusters-ui.conf
+       - ./fraudbusters-ui/appConfig.json:/usr/share/nginx/html/assets/appConfig.json
+       - ./fraudbusters-ui/authConfig.json:/usr/share/nginx/html/assets/authConfig.json
+
+   keyclock:
+      image: dr2.rbkmoney.com/rbkmoney/keycloak:8d6a2ad2c2afef8201a8801739d17379bdcc0d69
+      hostname: keyclock
+      container_name: keyclock
+      ports:
+        - 8080:8080
+      environment:
+        KEYCLOAK_USER: "admin"
+        KEYCLOAK_PASSWORD: "admin"
 
 networks:
   default:

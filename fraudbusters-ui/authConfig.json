@@ -1,0 +1,6 @@
+{
+    "realm": "SpringBootKeycloack",
+    "auth-server-url": "http://keyclock:8080/auth",
+    "resource": "login-app",
+    "public-client": true
+}
