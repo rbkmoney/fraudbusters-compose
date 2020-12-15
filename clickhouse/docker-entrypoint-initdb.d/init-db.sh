@@ -372,4 +372,10 @@ ORDER BY (eventTimeHour, partyId, shopId, paymentTool, status, currency, provide
 
     ALTER TABLE fraud.chargeback ADD COLUMN payerType String;
     ALTER TABLE fraud.chargeback ADD COLUMN tokenProvider String;
+
+    ALTER TABLE fraud.events_unique ADD COLUMN mobile UInt8;
+    ALTER TABLE fraud.events_unique ADD COLUMN recurrent UInt8;
+
+    ALTER TABLE fraud.payment ADD COLUMN mobile UInt8;
+    ALTER TABLE fraud.payment ADD COLUMN recurrent UInt8;
 EOSQL

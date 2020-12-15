@@ -1,6 +1,6 @@
 {
-    "realm": "SpringBootKeycloack",
+    "realm": "fraudbusters-realm",
     "auth-server-url": "http://keyclock:8080/auth",
-    "resource": "login-app",
+    "resource": "fraudbusters-app",
     "public-client": true
 }
