@@ -8,5 +8,4 @@
     </root>
     <logger name="com.rbkmoney" level="ALL"/>
     <logger name="org.springframework.jdbc.core" level="ALL"/>
-    <logger name="org.apache.tomcat" level="ALL"/>
 </configuration>

@@ -31,6 +31,9 @@ services:
        CONFLUENT_METRICS_REPORTER_TOPIC_REPLICAS: 1
        CONFLUENT_METRICS_ENABLE: 'true'
        CONFLUENT_SUPPORT_CUSTOMER_ID: 'anonymous'
+     ports:
+       - 9092:9092
+       - 29092:29092
      volumes:
        - /tmp/docker/kafka2/data:/var/lib/kafka/data
 
@@ -50,6 +53,7 @@ services:
                                 kafka-topics --create --if-not-exists --zookeeper zookeeper:2181 --partitions 1 --replication-factor 1 --topic payment_event && \
                                 kafka-topics --create --if-not-exists --zookeeper zookeeper:2181 --partitions 1 --replication-factor 1 --topic refund_event && \
                                 kafka-topics --create --if-not-exists --zookeeper zookeeper:2181 --partitions 1 --replication-factor 1 --topic chargeback_event && \
+                                kafka-topics --create --if-not-exists --zookeeper zookeeper:2181 --partitions 1 --replication-factor 1 --topic unknown_initiating_entity && \
                                 kafka-topics --create --if-not-exists --zookeeper zookeeper:2181 --partitions 1 --replication-factor 1  --config cleanup.policy=compact --topic template && \
                                 kafka-topics --create --if-not-exists --zookeeper zookeeper:2181 --partitions 1 --replication-factor 1  --config cleanup.policy=compact --topic template_p2p && \
                                 kafka-topics --create --if-not-exists --zookeeper zookeeper:2181 --partitions 1 --replication-factor 1  --config cleanup.policy=compact --topic template_reference && \
@@ -130,7 +134,7 @@ services:
       - 8990:8022
 
    wblist:
-     image: rbkmoney/wb-list-manager:dc7f451945194441357177fd3153ac82a0333eac
+     image: rbkmoney/wb-list-manager:4e1ef72046a43afaa24b34e4e537eef7e2761c74
      hostname: wblist
      container_name: wblist
      environment:
@@ -148,10 +152,12 @@ services:
        - 8991:8022
 
    fraudbusters:
-     image: rbkmoney/fraudbusters:937d4163815a2f78ba883e07e952178988bbd1f8
+     image: rbkmoney/fraudbusters:f7f0490d81e715921ed88bc4abce0de2d7f9b507
      hostname: fraudbusters
      container_name: fraudbusters
      environment:
+       management.security.enabled: 'false'
+       kafka.ssl.enable: 'false'
        kafka.bootstrap.servers: "broker:9092"
        geo.ip.service.url: "http://columbus:8022/repo"
        wb.list.service.url: "http://wblist:8022/v1/wb_list"
@@ -180,14 +186,16 @@ services:
      environment:
        POSTGRES_USER: postgres
        POSTGRES_PASSWORD: postgres
-       POSTGRES_DB: wblist
+       POSTGRES_DB: fraudbusters
        PGDATA: /data/postgres
+     ports:
+       - 6432:5432
      volumes:
         - ./postgres/data/3:/data/postgres
      restart: unless-stopped
 
    fb-management:
-     image: rbkmoney/fraudbusters-management:d04fe852af405a6d498e88602a6830e063ebb96f
+     image: dr2.rbkmoney.com/rbkmoney/fraudbusters-management:8b906501743e6f6bd74681d59d3efa98f9e78dff
      hostname: fb-management
      container_name: fb-management
      environment:
@@ -196,10 +204,18 @@ services:
        kafka.wblist.topic.event.sink: "wb-list-event-sink"
        kafka.fraudbusters.template: "template"
        kafka.fraudbusters.reference: "template_reference"
-       spring.datasource.url: "jdbc:postgresql://postgres-fb:5432/wblist"
+       spring.datasource.url: "jdbc:postgresql://postgres-fb:5432/fraudbusters"
        logging.config: "./tmp/logback-test.xml"
        management.metrics.binders.jvm.enabled: 'false'
        service.payment.url: 'http://fraudbusters:8022/fraud_payment/v1/'
+       spring.profiles.active: 'debug'
+       keycloak.enabled: "true"
+       keycloak.realm: "fraudbusters-realm"
+       keycloak.resource: "fraudbusters-app"
+       keycloak.auth-server-url: "http://keyclock:8080/auth"
+       cors.allowed-origins: "*"
+     ports:
+       - 8085:8080
      depends_on:
        - fraudbusters
        - broker
@@ -210,7 +226,7 @@ services:
        - ./log-java:/opt/fraudbusters-management/tmp
 
    fraudbusters-ui:
-     image: dr2.rbkmoney.com/rbkmoney/fraudbusters-ui:26afabe9b4e2e4774cfca1f42dc1e9f9c83d40e0
+     image: dr2.rbkmoney.com/rbkmoney/fraudbusters-ui:75a4e93bceea50feb3a6a9fba84ceceb93ddb278
      hostname: fraudbusters-ui
      container_name: fraudbusters-ui
      ports:
@@ -219,7 +235,18 @@ services:
        - fb-management
      volumes:
        - ./fraudbusters-ui/nginx.conf:/etc/nginx/vhosts.d/fraudbusters-ui.conf
-       - ./fraudbusters-ui//appConfig.json:/usr/share/nginx/html/fraudbusters-ui/assets/appConfig.json
+       - ./fraudbusters-ui/appConfig.json:/usr/share/nginx/html/assets/appConfig.json
+       - ./fraudbusters-ui/authConfig.json:/usr/share/nginx/html/assets/authConfig.json
+
+   keyclock:
+      image: dr2.rbkmoney.com/rbkmoney/keycloak:8d6a2ad2c2afef8201a8801739d17379bdcc0d69
+      hostname: keyclock
+      container_name: keyclock
+      ports:
+        - 8080:8080
+      environment:
+        KEYCLOAK_USER: "admin"
+        KEYCLOAK_PASSWORD: "admin"
 
 networks:
   default:
