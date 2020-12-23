@@ -118,8 +118,6 @@ services:
     entrypoint:
       - /docker-entrypoint.sh
       - postgres
-    ports:
-      - 5432:5432
 
    columbus:
     image: rbkmoney/columbus:88be0cbccde15c7d4c88403d495f8d564f826160
@@ -188,8 +186,6 @@ services:
        POSTGRES_PASSWORD: postgres
        POSTGRES_DB: fraudbusters
        PGDATA: /data/postgres
-     ports:
-       - 6432:5432
      volumes:
         - ./postgres/data/3:/data/postgres
      restart: unless-stopped
@@ -210,7 +206,7 @@ services:
        service.payment.url: 'http://fraudbusters:8022/fraud_payment/v1/'
        spring.profiles.active: 'debug'
        keycloak.enabled: "true"
-       keycloak.realm: "fraudbusters-realm"
+       keycloak.realm: "master"
        keycloak.resource: "fraudbusters-app"
        keycloak.auth-server-url: "http://keyclock:8080/auth"
        cors.allowed-origins: "*"
@@ -226,7 +222,7 @@ services:
        - ./log-java:/opt/fraudbusters-management/tmp
 
    fraudbusters-ui:
-     image: dr2.rbkmoney.com/rbkmoney/fraudbusters-ui:75a4e93bceea50feb3a6a9fba84ceceb93ddb278
+     image: dr2.rbkmoney.com/rbkmoney/fraudbusters-ui:616594fca7672394f0234baa77891c5121ad4f8a
      hostname: fraudbusters-ui
      container_name: fraudbusters-ui
      ports:

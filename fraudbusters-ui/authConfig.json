@@ -1,5 +1,5 @@
 {
-    "realm": "fraudbusters-realm",
+    "realm": "master",
     "auth-server-url": "http://keyclock:8080/auth",
     "resource": "fraudbusters-app",
     "public-client": true
