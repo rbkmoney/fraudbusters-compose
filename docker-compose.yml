@@ -80,7 +80,7 @@ services:
        - /tmp/docker/riak/data:/etc/riak/schemas
 
    clickhouse:
-     image: yandex/clickhouse-server:19.17
+     image: yandex/clickhouse-server:19.17.6.36
      hostname: clickhouse
      container_name: clickhouse
      environment:
@@ -152,7 +152,7 @@ services:
        - 8991:8022
 
    fraudbusters:
-     image: rbkmoney/fraudbusters:f7f0490d81e715921ed88bc4abce0de2d7f9b507
+     image: rbkmoney/fraudbusters:93527ea93d7f117d7ee4cdff7d6be17cba597715-epic
      hostname: fraudbusters
      container_name: fraudbusters
      environment:
@@ -163,6 +163,7 @@ services:
        wb.list.service.url: "http://wblist:8022/v1/wb_list"
        clickhouse.db.url: "jdbc:clickhouse://clickhouse:8123/default"
        logging.config: "tmp/logback-test.xml"
+       card-token-pool.filePath: "card-tokens"
        clickhouse.db.user: ''
        clickhouse.db.password: ''
        fraud.management.url: 'fb-management:8080'
@@ -171,13 +172,15 @@ services:
      depends_on:
        - clickhouse
        - broker
-       - columbus
+#       - columbus
        - wblist
        - kafka-setup
      ports:
        - 8999:8022
+       - 8111:8089
      volumes:
        - ./log-java:/opt/fraudbusters/tmp
+       - ./card-tokens:/opt/fraudbusters/card-tokens
 
    postgres-fb:
      container_name: postgres_container
@@ -195,7 +198,7 @@ services:
      restart: unless-stopped
 
    fb-management:
-     image: dr2.rbkmoney.com/rbkmoney/fraudbusters-management:8b906501743e6f6bd74681d59d3efa98f9e78dff
+     image: dr2.rbkmoney.com/rbkmoney/fraudbusters-management:f1118eb557309277e3c86d5ef8db923f0a61004f
      hostname: fb-management
      container_name: fb-management
      environment:
@@ -226,7 +229,7 @@ services:
        - ./log-java:/opt/fraudbusters-management/tmp
 
    fraudbusters-ui:
-     image: dr2.rbkmoney.com/rbkmoney/fraudbusters-ui:75a4e93bceea50feb3a6a9fba84ceceb93ddb278
+     image: dr2.rbkmoney.com/rbkmoney/fraudbusters-ui:f3cc3a56ea8ef2be96ba77c697ea6e62fb9ab85c
      hostname: fraudbusters-ui
      container_name: fraudbusters-ui
      ports:

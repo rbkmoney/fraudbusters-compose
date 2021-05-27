@@ -90,56 +90,17 @@ clickhouse client -n <<-EOSQL
 
     CREATE DATABASE IF NOT EXISTS fraud;
 
-DROP TABLE IF EXISTS fraud.fraud_payment;
+    DROP TABLE IF EXISTS fraud.fraud_payment;
 
-create table fraud.fraud_payment (
+    create table fraud.fraud_payment (
 
-timestamp Date,
-  id String,
-  eventTime UInt64,
-  eventTimeHour UInt64,
+    timestamp Date,
+      id String,
+      eventTime UInt64,
+      eventTimeHour UInt64,
 
-  fraudType String,
-  comment String,
-
-    email                 String,
-    ip                    String,
-    fingerprint           String,
-
-    bin                   String,
-    maskedPan             String,
-    cardToken             String,
-    paymentSystem         String,
-    paymentTool           String,
-
-    terminal              String,
-    providerId            String,
-    bankCountry           String,
-
-    partyId               String,
-    shopId                String,
-
-    amount                UInt64,
-    currency              String,
-
-    status                Enum8('pending' = 1, 'processed' = 2, 'captured' = 3, 'cancelled' = 4, 'failed' = 5),
-    errorReason           String,
-    errorCode             String,
-    paymentCountry        String
-) ENGINE = MergeTree()
-PARTITION BY toYYYYMM (timestamp)
-ORDER BY (eventTimeHour, partyId, shopId, paymentTool, status, currency, providerId, fingerprint, cardToken, eventTime, id);
-
-
-    DROP TABLE IF EXISTS fraud.refund;
-
-    create table fraud.refund
-    (
-        timestamp             Date,
-        eventTime             UInt64,
-        eventTimeHour         UInt64,
-
-        id                    String,
+      fraudType String,
+      comment String,
 
         email                 String,
         ip                    String,
@@ -161,13 +122,13 @@ ORDER BY (eventTimeHour, partyId, shopId, paymentTool, status, currency, provide
         amount                UInt64,
         currency              String,
 
-        status                Enum8('pending' = 1, 'succeeded' = 2, 'failed' = 3),
+        status                Enum8('pending' = 1, 'processed' = 2, 'captured' = 3, 'cancelled' = 4, 'failed' = 5),
         errorReason           String,
         errorCode             String,
-        paymentId             String
-    ) ENGINE = ReplacingMergeTree()
+        paymentCountry        String
+    ) ENGINE = MergeTree()
     PARTITION BY toYYYYMM (timestamp)
-    ORDER BY (eventTimeHour, partyId, shopId, status, currency, providerId, fingerprint, cardToken, id, paymentId);
+    ORDER BY (eventTimeHour, partyId, shopId, paymentTool, status, currency, providerId, fingerprint, cardToken, eventTime, id);
 
     DROP TABLE IF EXISTS fraud.payment;
 
@@ -206,45 +167,6 @@ ORDER BY (eventTimeHour, partyId, shopId, paymentTool, status, currency, provide
     ) ENGINE = ReplacingMergeTree()
     PARTITION BY toYYYYMM (timestamp)
     ORDER BY (eventTimeHour, partyId, shopId, paymentTool, status, currency, providerId, fingerprint, cardToken, id);
-
-    DROP TABLE IF EXISTS fraud.chargeback;
-
-    create table fraud.chargeback
-    (
-        timestamp             Date,
-        eventTime             UInt64,
-        eventTimeHour         UInt64,
-
-        id                    String,
-
-        email                 String,
-        ip                    String,
-        fingerprint           String,
-
-        bin                   String,
-        maskedPan             String,
-        cardToken             String,
-        paymentSystem         String,
-        paymentTool           String,
-
-        terminal              String,
-        providerId            String,
-        bankCountry           String,
-
-        partyId               String,
-        shopId                String,
-
-        amount                UInt64,
-        currency              String,
-
-        status                Enum8('accepted' = 1, 'rejected' = 2, 'cancelled' = 3),
-
-        category              Enum8('fraud' = 1, 'dispute' = 2, 'authorisation' = 3, 'processing_error' = 4),
-        chargebackCode        String,
-        paymentId             String
-    ) ENGINE = ReplacingMergeTree()
-    PARTITION BY toYYYYMM (timestamp)
-    ORDER BY (eventTimeHour, partyId, shopId, category, status, currency, providerId, fingerprint, cardToken, id, paymentId);
 
     DROP TABLE IF EXISTS fraud.refund;
 
@@ -378,4 +300,45 @@ ORDER BY (eventTimeHour, partyId, shopId, paymentTool, status, currency, provide
 
     ALTER TABLE fraud.payment ADD COLUMN mobile UInt8;
     ALTER TABLE fraud.payment ADD COLUMN recurrent UInt8;
+
+    DROP TABLE IF EXISTS fraud.withdrawal;
+
+    create table fraud.withdrawal
+    (
+        timestamp             Date,
+        eventTime             UInt64,
+        eventTimeHour         UInt64,
+
+        id                    String,
+
+        amount                UInt64,
+        currency              String,
+
+        bin                   String,
+        maskedPan             String,
+        cardToken             String,
+        paymentSystem         String,
+        paymentTool           String,
+        bankName              String,
+        cardHolderName        String,
+        issuerCountry         String,
+
+        cryptoWalletId        String,
+        cryptoWalletCurrency  String,
+
+        terminal              String,
+        providerId            String,
+        bankCountry           String,
+
+        identityId            String,
+        accountId             String,
+        accountCurrency       String,
+
+        status                Enum8('pending' = 1, 'succeeded' = 2, 'failed' = 3),
+        errorReason           String,
+        errorCode             String
+
+    ) ENGINE = ReplacingMergeTree()
+    PARTITION BY toYYYYMM (timestamp)
+    ORDER BY (eventTimeHour, identityId, status, currency, paymentSystem, providerId, cardToken, id);
 EOSQL
