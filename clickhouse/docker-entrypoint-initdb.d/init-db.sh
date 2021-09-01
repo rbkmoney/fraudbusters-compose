@@ -341,4 +341,265 @@ clickhouse client -n <<-EOSQL
     ) ENGINE = ReplacingMergeTree()
     PARTITION BY toYYYYMM (timestamp)
     ORDER BY (eventTimeHour, identityId, status, currency, paymentSystem, providerId, cardToken, id);
+
+    INSERT INTO fraud.payment (timestamp, eventTime, eventTimeHour, partyId, shopId, email, fingerprint, amount,
+    currency, status, errorReason, id, ip, bin, maskedPan, paymentTool, cardToken)
+    VALUES
+    ('2020-05-06', 1588761208,1588759200000, 'group_1','2035728', 'email', '4bef59146f8e4640ab34915f84ddac8b', 10500, 'RUB', 'processed', '','1DkraVdGJfs.1', '204.26.61.110', '666', '3125', 'bank_card', '477bba133c182267fe5f086924abdc5db71f77bfc27f01f2843f2cdc69d89f05');
+    INSERT INTO fraud.payment (timestamp, eventTime, eventTimeHour, partyId, shopId, email, fingerprint, amount,
+    currency, status, errorReason, id, ip, bin, maskedPan, paymentTool, cardToken)
+    VALUES
+    ('2020-05-06', 1588761208,1588759200000, 'group_1','2035728', 'email', '4bef59146f8e4640ab34915f84ddac8b', 10500, 'RUB', 'captured', '','1DkraVdGJfs.1', '204.26.61.110', '666', '3125', 'bank_card', '477bba133c182267fe5f086924abdc5db71f77bfc27f01f2843f2cdc69d89f05');
+    INSERT INTO fraud.payment (timestamp, eventTime, eventTimeHour, partyId, shopId, email, fingerprint, amount,
+    currency, status, errorReason, id, ip, bin, maskedPan, paymentTool, cardToken)
+    VALUES
+    ('2020-05-06', 1588761208,1588759200000, 'group_1','2035728', 'email_2', '5bef59146f8e4640ab34915f84ddac8b', 50000, 'RUB', 'processed', '','1DkraVdGJfs.1', '204.26.61.110', '666', '3125', 'bank_card', '477bba133c182267fe5f086924abdc5db71f77bfc27f01f2843f2cdc69d89f05');
+    INSERT INTO fraud.payment (timestamp, eventTime, eventTimeHour, partyId, shopId, email, fingerprint, amount,
+    currency, status, errorReason, id, ip, bin, maskedPan, paymentTool, cardToken)
+    VALUES
+    ('2020-05-06', 1588761208,1588759200000, 'group_1','2035728', 'email_2', '5bef59146f8e4640ab34915f84ddac8b', 50000, 'RUB', 'captured', '','1DkraVdGJfs.1', '204.26.61.110', '666', '3125', 'bank_card', '477bba133c182267fe5f086924abdc5db71f77bfc27f01f2843f2cdc69d89f05');
+    INSERT INTO fraud.payment (timestamp, eventTime, eventTimeHour, partyId, shopId, email, fingerprint, amount,
+    currency, status, errorReason, id, ip, bin, maskedPan, paymentTool, cardToken)
+    VALUES
+    ('2020-05-06', 1588761208,1588759200000, 'partyId_2','2035728', 'email_2', '4bef59146f8e4640ab34915f84ddac8b', 50000, 'RUB', 'processed', '','1DkraVdGJfs.1', '204.26.61.110', '666', '3125', 'bank_card', '477bba133c182267fe5f086924abdc5db71f77bfc27f01f2843f2cdc69d89f05');
+    INSERT INTO fraud.payment (timestamp, eventTime, eventTimeHour, partyId, shopId, email, fingerprint, amount,
+    currency, status, errorReason, id, ip, bin, maskedPan, paymentTool, cardToken)
+    VALUES
+    ('2020-05-06', 1588761208,1588759200000, 'partyId_2','2035728', 'email_2', '4bef59146f8e4640ab34915f84ddac8b', 50000, 'RUB', 'captured', '','1DkraVdGJfs.1', '204.26.61.110', '666', '3125', 'bank_card', '477bba133c182267fe5f086924abdc5db71f77bfc27f01f2843f2cdc69d89f05');
+    INSERT INTO fraud.payment (timestamp, eventTime, eventTimeHour, partyId, shopId, email, fingerprint, amount,
+    currency, status, errorReason, id, ip, bin, maskedPan, paymentTool, cardToken)
+    VALUES
+    ('2019-12-05', 1587761208,1587759200000, 'group_1','2035728', 'email', '4bef59146f8e4640ab34915f84ddac8b', 5000, 'RUB', 'processed', '','1DkratTHbpg.1', '204.26.61.110', '666', '3125', 'bank_card', '477bba133c182267fe5f086924abdc5db71f77bfc27f01f2843f2cdc69d89f05');
+    INSERT INTO fraud.payment (timestamp, eventTime, eventTimeHour, partyId, shopId, email, fingerprint, amount,
+    currency, status, errorReason, id, ip, bin, maskedPan, paymentTool, cardToken)
+    VALUES
+    ('2019-12-05', 1587761208,1587759200000, 'group_1','2035728', 'email', '4bef59146f8e4640ab34915f84ddac8b', 5000, 'RUB', 'captured', '','1DkratTHbpg.1', '204.26.61.110', '666', '3125', 'bank_card', '477bba133c182267fe5f086924abdc5db71f77bfc27f01f2843f2cdc69d89f05');
+    INSERT INTO fraud.payment (timestamp, eventTime, eventTimeHour, partyId, shopId, email, fingerprint, amount,
+    currency, status, errorReason, id, ip, bin, maskedPan, paymentTool, cardToken)
+    VALUES
+    ('2019-12-05', 1587761208,1587759200000, 'group_1','2035728', 'email', '4bef59146f8e4640ab34915f84ddac8b', 5000, 'RUB', 'processed', '','1DkratTHbpg.1', '204.26.61.110', '666', '3125', 'bank_card', '477bba133c182267fe5f086924abdc5db71f77bfc27f01f2843f2cdc69d89f05');
+    INSERT INTO fraud.payment (timestamp, eventTime, eventTimeHour, partyId, shopId, email, fingerprint, amount,
+    currency, status, errorReason, id, ip, bin, maskedPan, paymentTool, cardToken)
+    VALUES
+    ('2019-12-05', 1587761208,1587759200000, 'group_1','2035728', 'email', '4bef59146f8e4640ab34915f84ddac8b', 5000, 'RUB', 'captured', '','1DkratTwbpg.1', '204.26.61.110', '666', '3125', 'bank_card', '477bba133c182267fe5f086924abdc5db71f77bfc27f01f2843f2cdc69d89f05');
+    INSERT INTO fraud.payment (timestamp, eventTime, eventTimeHour, partyId, shopId, email, fingerprint, amount,
+    currency, status, errorReason, id, ip, bin, maskedPan, paymentTool, cardToken)
+    VALUES
+    ('2019-12-05', 1587761208,1587759200000, 'group_1','2035728', 'email', '4bef59146f8e4640ab34915f84ddac8b', 5000, 'RUB', 'captured', '','1DkratTrpg.1', '204.26.61.110', '666', '3125', 'bank_card', '477bba133c182267fe5f086924abdc5db71f77bfc27f01f2843f2cdc69d89f05');
+    INSERT INTO fraud.payment (timestamp, eventTime, eventTimeHour, partyId, shopId, email, fingerprint, amount,
+    currency, status, errorReason, id, ip, bin, maskedPan, paymentTool, cardToken)
+    VALUES
+    ('2019-12-05', 1587761208,1587759200000, 'group_1','2035728', 'email', '4bef59146f8e4640ab34915f84ddac8b', 5000, 'RUB', 'captured', '','1DkratTwbpg.1', '204.26.61.110', '666', '3125', 'bank_card', '477bba133c182267fe5f086924abdc5db71f77bfc27f01f2843f2cdc69d89f05');
+    INSERT INTO fraud.payment (timestamp, eventTime, eventTimeHour, partyId, shopId, email, fingerprint, amount,
+    currency, status, errorReason, id, ip, bin, maskedPan, paymentTool, cardToken)
+    VALUES
+    ('2019-12-05', 1587761208,1587759200000, 'group_1','2035728', 'email', '4bef59146f8e4640ab34915f84ddac8b', 5000, 'RUB', 'captured', '','1Dkragfbpg.1', '204.26.61.110', '666', '3125', 'bank_card', '477bba133c182267fe5f086924abdc5db71f77bfc27f01f2843f2cdc69d89f05');
+
+    INSERT INTO fraud.chargeback
+    (timestamp, eventTime, eventTimeHour, partyId, shopId, email, fingerprint, amount, currency, status, id,
+    ip, bin, maskedPan, paymentTool, cardToken, paymentSystem, terminal, providerId, bankCountry, paymentId)
+    VALUES
+    ('2020-05-06', 1588761208, 1588759200000, 'group_1', '2035728', 'email', '4bef59146f8e4640ab34915f84ddac8b', 10500, 'RUB', 'rejected', '1DkraVdGJbs.1', '204.26.61.110', '666', '3125', 'bank_card','477bba133c182267fe5f086924abdc5db71f77bfc27f01f2843f2cdc69d89f05', 'VISA', '123', '1', 'RUS', '1111vbd');
+    INSERT INTO fraud.chargeback
+    (timestamp, eventTime, eventTimeHour, partyId, shopId, email, fingerprint, amount, currency, status, id,
+     ip, bin, maskedPan, paymentTool, cardToken, paymentSystem, terminal, providerId, bankCountry, paymentId)
+    VALUES
+    ('2020-05-06', 1588761208, 1588759200000, 'group_1', '2035728', 'email', '4bef59146f8e4640ab34915f84ddac8b', 10500, 'RUB', 'rejected', '1DkraVdGJfs.1', '204.26.61.110', '666', '3125', 'bank_card','477bba133c182267fe5f086924abdc5db71f77bfc27f01f2843f2cdc69d89f05', 'VISA', '123', '1', 'RUS', '1111vba');
+    INSERT INTO fraud.chargeback
+    (timestamp, eventTime, eventTimeHour, partyId, shopId, email, fingerprint, amount, currency, status, id,
+     ip, bin, maskedPan, paymentTool, cardToken, paymentSystem, terminal, providerId, bankCountry, paymentId)
+    VALUES
+    ('2020-05-06', 1588761208, 1588759200000, 'group_1', '2035728', 'email_2', '5bef59146f8e4640ab34915f84ddac8b', 50000, 'RUB', 'rejected', '1VMI0gIoAy0.2', '204.26.61.110', '666', '3125', 'bank_card','477bba133c182267fe5f086924abdc5db71f77bfc27f01f2843f2cdc69d89f05', 'VISA', '123', '1', 'RUS', '1111vbc');
+    INSERT INTO fraud.chargeback
+    (timestamp, eventTime, eventTimeHour, partyId, shopId, email, fingerprint, amount, currency, status, id,
+     ip, bin, maskedPan, paymentTool, cardToken, paymentSystem, terminal, providerId, bankCountry, paymentId)
+    VALUES
+    ('2020-05-06', 1588761208, 1588759200000, 'group_1', '2035728', 'email_2', '5bef59146f8e4640ab34915f84ddac8b', 50000, 'RUB', 'cancelled', '1VMI3GwdR5s.1', '204.26.61.110', '666', '3125', 'bank_card',        '477bba133c182267fe5f086924abdc5db71f77bfc27f01f2843f2cdc69d89f05', 'VISA', '123', '1', 'RUS', '1111vbf');
+    INSERT INTO fraud.chargeback
+    (timestamp, eventTime, eventTimeHour, partyId, shopId, email, fingerprint, amount, currency, status, id,
+     ip, bin, maskedPan, paymentTool, cardToken, paymentSystem, terminal, providerId, bankCountry, paymentId)
+    VALUES
+    ('2020-05-06', 1588761208, 1588759200000, 'partyId_2', '2035728', 'email_2', '4bef59146f8e4640ab34915f84ddac8b', 50000, 'RUB', 'accepted', '1DkraVdGJfr.1', '204.26.61.110', '666', '3125', 'bank_card', '477bba133c182267fe5f086924abdc5db71f77bfc27f01f2843f2cdc69d89f05', 'VISA', '123', '1', 'RUS', '1111vbe');
+    INSERT INTO fraud.chargeback
+    (timestamp, eventTime, eventTimeHour, partyId, shopId, email, fingerprint, amount, currency, status, id,
+     ip, bin, maskedPan, paymentTool, cardToken, paymentSystem, terminal, providerId, bankCountry, paymentId)
+    VALUES
+    ('2020-05-06', 1588761208, 1588759200000, 'partyId_2', '2035729', 'email_2', '4bef59146f8e4640ab34915f84ddac8b', 50000, 'RUB', 'accepted', '1DkraVdGJfs.1', '204.26.61.110', '666', '3125', 'bank_card', '477bba133c182267fe5f086924abdc5db71f77bfc27f01f2843f2cdc69d89f05', 'VISA', '123', '1', 'RUS', '1111vbp');
+    INSERT INTO fraud.chargeback
+    (timestamp, eventTime, eventTimeHour, partyId, shopId, email, fingerprint, amount, currency, status, id,
+     ip, bin, maskedPan, paymentTool, cardToken, paymentSystem, terminal, providerId, bankCountry, paymentId)
+    VALUES
+    ('2019-12-05', 1587761208, 1587759200000, 'group_1', '2035728', 'email', '4bef59146f8e4640ab34915f84ddac8b', 5000, 'RUB', 'cancelled', '1DkratTHbpg.1', '204.26.61.110', '666', '3125', 'bank_card', '477bba133c182267fe5f086924abdc5db71f77bfc27f01f2843f2cdc69d89f05', 'VISA', '123', '1', 'RUS', '1111vbdss');
+    INSERT INTO fraud.chargeback
+    (timestamp, eventTime, eventTimeHour, partyId, shopId, email, fingerprint, amount, currency, status, id,
+     ip, bin, maskedPan, paymentTool, cardToken, paymentSystem, terminal, providerId, bankCountry, paymentId)
+    VALUES
+    ('2019-12-05', 1587761208, 1587759200000, 'group_1', '2035728', 'email', '4bef59146f8e4640ab34915f84ddac8b', 5000, 'RUB', 'cancelled', '1DkratTHbpg.1', '204.26.61.110', '666', '3125', 'bank_card', '477bba133c182267fe5f086924abdc5db71f77bfc27f01f2843f2cdc69d89f05', 'VISA', '123', '1', 'RUS', '1111vbz');
+    INSERT INTO fraud.chargeback
+    (timestamp, eventTime, eventTimeHour, partyId, shopId, email, fingerprint, amount, currency, status, id,
+     ip, bin, maskedPan, paymentTool, cardToken, paymentSystem, terminal, providerId, bankCountry, paymentId)
+    VALUES
+    ('2019-12-05', 1587761208, 1587759200000, 'group_1', '2035728', 'email', '4bef59146f8e4640ab34915f84ddac8b', 5000, 'RUB', 'accepted', '1DkratTHbpg.1', '204.26.61.110', '666', '3125', 'bank_card', '477bba133c182267fe5f086924abdc5db71f77bfc27f01f2843f2cdc69d89f05', 'VISA', '123', '1', 'RUS', '1111vbuc');
+    INSERT INTO fraud.chargeback
+    (timestamp, eventTime, eventTimeHour, partyId, shopId, email, fingerprint, amount, currency, status, id,
+     ip, bin, maskedPan, paymentTool, cardToken, paymentSystem, terminal, providerId, bankCountry, paymentId)
+    VALUES
+    ('2019-12-05', 1587761208, 1587759200000, 'group_1', '2035728', 'email', '4bef59146f8e4640ab34915f84ddac8b', 5000, 'RUB', 'rejected', '1DkratTHbpg.1', '204.26.61.110', '666', '3125', 'bank_card', '477bba133c182267fe5f086924abdc5db71f77bfc27f01f2843f2cdc69d89f05', 'VISA', '123', '1', 'RUS', '1111vbtt');
+
+    INSERT INTO fraud.fraud_payment
+    (timestamp, eventTime, eventTimeHour, partyId, shopId, email, fingerprint, amount, currency, status, id,
+     ip, bin, maskedPan, paymentTool, cardToken, paymentSystem, terminal, providerId, bankCountry, fraudType, comment)
+    VALUES ('2020-05-06', 1588761208, 1588759200000, 'group_1', '2035728', 'email', '4bef59146f8e4640ab34915f84ddac8b', 10500, 'RUB', 'captured', '1DkraVdGJbs.1', '204.26.61.110', '666', '3125', 'bank_card', '477bba133c182267fe5f086924abdc5db71f77bfc27f01f2843f2cdc69d89f05', 'VISA', '123', '1', 'RUS', 'fraud', '');
+    INSERT INTO fraud.fraud_payment
+    (timestamp, eventTime, eventTimeHour, partyId, shopId, email, fingerprint, amount, currency, status, id,
+     ip, bin, maskedPan, paymentTool, cardToken, paymentSystem, terminal, providerId, bankCountry, fraudType, comment)
+    VALUES
+    ('2020-05-06', 1588761208, 1588759200000, 'group_1', '2035728', 'email', '4bef59146f8e4640ab34915f84ddac8b', 10500, 'RUB', 'captured', '1DkraVdGJfs.1', '204.26.61.110', '666', '3125', 'bank_card', '477bba133c182267fe5f086924abdc5db71f77bfc27f01f2843f2cdc69d89f05', 'VISA', '123', '1', 'RUS', 'fraud', '');
+    INSERT INTO fraud.fraud_payment
+    (timestamp, eventTime, eventTimeHour, partyId, shopId, email, fingerprint, amount, currency, status, id,
+     ip, bin, maskedPan, paymentTool, cardToken, paymentSystem, terminal, providerId, bankCountry, fraudType, comment)
+    VALUES
+    ('2020-05-06', 1588761208, 1588759200000, 'group_1', '2035728', 'email_2', '5bef59146f8e4640ab34915f84ddac8b',  50000, 'RUB', 'captured', '1VMI0gIoAy0.2', '204.26.61.110', '666', '3125', 'bank_card', '477bba133c182267fe5f086924abdc5db71f77bfc27f01f2843f2cdc69d89f05', 'VISA', '123', '1', 'RUS', 'fraud', 'comment');
+    INSERT INTO fraud.fraud_payment
+    (timestamp, eventTime, eventTimeHour, partyId, shopId, email, fingerprint, amount, currency, status, id,
+     ip, bin, maskedPan, paymentTool, cardToken, paymentSystem, terminal, providerId, bankCountry, fraudType, comment)
+    VALUES
+    ('2020-05-06', 1588761208, 1588759200000, 'group_1', '2035728', 'email_2', '5bef59146f8e4640ab34915f84ddac8b', 50000, 'RUB', 'cancelled', '1VMI3GwdR5s.1', '204.26.61.110', '666', '3125', 'bank_card', '477bba133c182267fe5f086924abdc5db71f77bfc27f01f2843f2cdc69d89f05', 'VISA', '123', '1', 'RUS', 'fraud', '');
+    INSERT INTO fraud.fraud_payment
+    (timestamp, eventTime, eventTimeHour, partyId, shopId, email, fingerprint, amount, currency, status, id,
+     ip, bin, maskedPan, paymentTool, cardToken, paymentSystem, terminal, providerId, bankCountry, fraudType, comment)
+    VALUES
+    ('2020-05-06', 1588761208, 1588759200000, 'partyId_2', '2035728', 'email_2', '4bef59146f8e4640ab34915f84ddac8b', 50000, 'RUB', 'processed', '1DkraVdGJfr.1', '204.26.61.110', '666', '3125', 'bank_card', '477bba133c182267fe5f086924abdc5db71f77bfc27f01f2843f2cdc69d89f05', 'VISA', '123', '1', 'RUS', 'fraud', '');
+    INSERT INTO fraud.fraud_payment
+    (timestamp, eventTime, eventTimeHour, partyId, shopId, email, fingerprint, amount, currency, status, id,
+     ip, bin, maskedPan, paymentTool, cardToken, paymentSystem, terminal, providerId, bankCountry, fraudType, comment)
+    VALUES
+    ('2020-05-06', 1588761208, 1588759200000, 'partyId_2', '2035729', 'email_2', '4bef59146f8e4640ab34915f84ddac8b', 50000, 'RUB', 'processed', '1DkraVdGJfs.1', '204.26.61.110', '666', '3125', 'bank_card', '477bba133c182267fe5f086924abdc5db71f77bfc27f01f2843f2cdc69d89f05', 'VISA', '123', '1', 'RUS', 'fraud', '');
+    INSERT INTO fraud.fraud_payment
+    (timestamp, eventTime, eventTimeHour, partyId, shopId, email, fingerprint, amount, currency, status, id,
+     ip, bin, maskedPan, paymentTool, cardToken, paymentSystem, terminal, providerId, bankCountry, fraudType, comment)
+    VALUES
+    ('2019-12-05', 1587761208, 1587759200000, 'group_1', '2035728', 'email', '4bef59146f8e4640ab34915f84ddac8b', 5000, 'RUB', 'processed', '1DkratTHbpg.1', '204.26.61.110', '666', '3125', 'bank_card', '477bba133c182267fe5f086924abdc5db71f77bfc27f01f2843f2cdc69d89f05', 'VISA', '123', '1', 'RUS', 'fraud', 'comment');
+    INSERT INTO fraud.fraud_payment
+    (timestamp, eventTime, eventTimeHour, partyId, shopId, email, fingerprint, amount, currency, status, id,
+     ip, bin, maskedPan, paymentTool, cardToken, paymentSystem, terminal, providerId, bankCountry, fraudType, comment)
+    VALUES
+    ('2019-12-05', 1587761208, 1587759200000, 'group_1', '2035728', 'email', '4bef59146f8e4640ab34915f84ddac8b', 5000, 'RUB', 'cancelled', '1DkratTHbpg.1', '204.26.61.110', '666', '3125', 'bank_card', '477bba133c182267fe5f086924abdc5db71f77bfc27f01f2843f2cdc69d89f05', 'VISA', '123', '1', 'RUS', 'fraud', '');
+    INSERT INTO fraud.fraud_payment
+    (timestamp, eventTime, eventTimeHour, partyId, shopId, email, fingerprint, amount, currency, status, id,
+     ip, bin, maskedPan, paymentTool, cardToken, paymentSystem, terminal, providerId, bankCountry, fraudType, comment)
+    VALUES
+    ('2019-12-05', 1587761208, 1587759200000, 'group_1', '2035728', 'email', '4bef59146f8e4640ab34915f84ddac8b', 5000, 'RUB', 'pending', '1DkratTHbpg.1', '204.26.61.110', '666', '3125', 'bank_card', '477bba133c182267fe5f086924abdc5db71f77bfc27f01f2843f2cdc69d89f05', 'VISA', '123', '1', 'RUS', 'fraud', '');
+    INSERT INTO fraud.fraud_payment
+    (timestamp, eventTime, eventTimeHour, partyId, shopId, email, fingerprint, amount, currency, status, id,
+     ip, bin, maskedPan, paymentTool, cardToken, paymentSystem, terminal, providerId, bankCountry, fraudType, comment)
+    VALUES
+    ('2019-12-05', 1587761208, 1587759200000, 'partyId_2', '2035728', 'email', '4bef59146f8e4640ab34915f84ddac8b', 5000, 'RUB', 'failed', '1DkratTHbpg.1', '204.26.61.110', '666', '3125', 'bank_card', '477bba133c182267fe5f086924abdc5db71f77bfc27f01f2843f2cdc69d89f05', 'VISA', '123', '1', 'RUS', 'fraud', '');
+
+    INSERT INTO fraud.events_unique
+    (timestamp, eventTime, eventTimeHour, partyId, shopId, email, fingerprint, amount, currency, mobile, paymentId,
+     ip, bin, maskedPan, cardToken, resultStatus, checkedRule, checkedTemplate, bankCountry, invoiceId, bankName)
+    VALUES ('2020-06-06', 1588761208, 1588759200000, 'group_1', '2035728', 'email', '4bef59146f8e4640ab34915f84ddac8b', 10500, 'RUB', 1, '2PkraBdGJbs.1', '204.26.61.110', '666', '3125', '477bba133c182267fe5f086924abdc5db71f77bfc27f01f2843f2cdc69d89f05', 'ACCEPT', '', 'RULE_NOT_CHECKED', 'RUS', '1111vbd', 'SBER');
+    INSERT INTO fraud.events_unique
+    (timestamp, eventTime, eventTimeHour, partyId, shopId, email, fingerprint, amount, currency, mobile, paymentId,
+     ip, bin, maskedPan, cardToken, resultStatus, checkedRule, checkedTemplate, bankCountry, invoiceId, bankName)
+    VALUES
+    ('2020-05-06', 1588761208, 1588759200000, 'group_1', '2035728', 'email', '4bef59146f8e4640ab34915f84ddac8b', 10500, 'RUB', 1, '1DkraVdGJbs.1', '204.26.61.110', '666', '3125', '477bba133c182267fe5f086924abdc5db71f77bfc27f01f2843f2cdc69d89f05', 'ACCEPT', '', 'RULE_NOT_CHECKED', 'RUS', '1111vbd', 'SBER');
+    INSERT INTO fraud.events_unique
+    (timestamp, eventTime, eventTimeHour, partyId, shopId, email, fingerprint, amount, currency, mobile, paymentId,
+     ip, bin, maskedPan, cardToken, resultStatus, checkedRule, checkedTemplate, bankCountry, invoiceId, bankName)
+    VALUES
+    ('2020-05-06', 1588761208, 1588759200000, 'group_1', '2035728', 'email', '4bef59146f8e4640ab34915f84ddac8b', 10500, 'RUB', 0, '1DkraVdGJfs.1', '204.26.61.110', '666', '3125', '477bba133c182267fe5f086924abdc5db71f77bfc27f01f2843f2cdc69d89f05', 'ACCEPT', '', 'RULE_NOT_CHECKED', 'RUS', '1111vba', 'SBER');
+    INSERT INTO fraud.events_unique
+    (timestamp, eventTime, eventTimeHour, partyId, shopId, email, fingerprint, amount, currency, mobile, paymentId,
+     ip, bin, maskedPan, cardToken, resultStatus, checkedRule, checkedTemplate, bankCountry, invoiceId, bankName)
+    VALUES
+    ('2020-05-06', 1588761208, 1588759200000, 'group_1', '2035728', 'email_2', '5bef59146f8e4640ab34915f84ddac8b', 50000, 'RUB', 1, '1VMI0gIoAy0.2', '204.26.61.110', '666', '3125', '477bba133c182267fe5f086924abdc5db71f77bfc27f01f2843f2cdc69d89f05', 'ACCEPT', '', 'RULE_NOT_CHECKED', 'RUS', '1111vbc', 'SBER');
+    INSERT INTO fraud.events_unique
+    (timestamp, eventTime, eventTimeHour, partyId, shopId, email, fingerprint, amount, currency, mobile, paymentId,
+     ip, bin, maskedPan, cardToken, resultStatus, checkedRule, checkedTemplate, bankCountry, invoiceId, bankName)
+    VALUES
+    ('2020-05-06', 1588761208, 1588759200000, 'group_1', '2035728', 'email_2', '5bef59146f8e4640ab34915f84ddac8b', 50000, 'RUB', 1, '1VMI3GwdR5s.1', '204.26.61.110', '666', '3125', '477bba133c182267fe5f086924abdc5db71f77bfc27f01f2843f2cdc69d89f05', 'ACCEPT', '3DS_RULE', '3DS_TEMPLATE', 'RUS', '1111vbf', 'SBER');
+    INSERT INTO fraud.events_unique
+    (timestamp, eventTime, eventTimeHour, partyId, shopId, email, fingerprint, amount, currency, mobile, paymentId,
+     ip, bin, maskedPan, cardToken, resultStatus, checkedRule, checkedTemplate, bankCountry, invoiceId, bankName)
+    VALUES
+    ('2020-05-06', 1588761208, 1588759200000, 'partyId_2', '2035728', 'email_2', '4bef59146f8e4640ab34915f84ddac8b', 50000, 'RUB', 1, '1DkraVdGJfr.1', '204.26.61.110', '666', '3125', '477bba133c182267fe5f086924abdc5db71f77bfc27f01f2843f2cdc69d89f05', 'ACCEPT_AND_NOTIFY', 'count', 'COUNT_TEMPLATE', 'RUS', '1111vbe', 'SBER');
+    INSERT INTO fraud.events_unique
+    (timestamp, eventTime, eventTimeHour, partyId, shopId, email, fingerprint, amount, currency, mobile, paymentId,
+     ip, bin, maskedPan, cardToken, resultStatus, checkedRule, checkedTemplate, bankCountry, invoiceId, bankName)
+    VALUES
+    ('2020-05-06', 1588761208, 1588759200000, 'partyId_2', '2035729', 'email_2', '4bef59146f8e4640ab34915f84ddac8b', 50000, 'RUB', 0, '1DkraVdGJfb.1', '204.26.61.110', '666', '3125', '477bba133c182267fe5f086924abdc5db71f77bfc27f01f2843f2cdc69d89f05', 'ACCEPT_AND_NOTIFY', 'sum', 'SUM_TEMPLATE', 'RUS', '1111vbp', 'SBER');
+    INSERT INTO fraud.events_unique
+    (timestamp, eventTime, eventTimeHour, partyId, shopId, email, fingerprint, amount, currency, mobile, paymentId,
+     ip, bin, maskedPan, cardToken, resultStatus, checkedRule, checkedTemplate, bankCountry, invoiceId, bankName)
+    VALUES
+    ('2019-12-05', 1587761208, 1587759200000, 'group_1', '2035728', 'email', '4bef59146f8e4640ab34915f84ddac8b', 5000, 'RUB', 0, '1DkratTHbpg.1', '204.26.61.110', '666', '3125', '477bba133c182267fe5f086924abdc5db71f77bfc27f01f2843f2cdc69d89f05', 'NORMAL', '', 'RULE_NOT_CHECKED', 'RUS', '1111vbdss', 'SBER');
+    INSERT INTO fraud.events_unique
+    (timestamp, eventTime, eventTimeHour, partyId, shopId, email, fingerprint, amount, currency, mobile, paymentId,
+     ip, bin, maskedPan, cardToken, resultStatus, checkedRule, checkedTemplate, bankCountry, invoiceId, bankName)
+    VALUES
+    ('2019-12-05', 1587761208, 1587759200000, 'group_1', '2035728', 'email', '4bef59146f8e4640ab34915f84ddac8b', 5000, 'RUB', 1, '1DkratTHbpg.1', '204.26.61.110', '666', '3125', '477bba133c182267fe5f086924abdc5db71f77bfc27f01f2843f2cdc69d89f05', 'NORMAL', '', 'RULE_NOT_CHECKED', 'RUS', '1111vbz', 'SBER');
+    INSERT INTO fraud.events_unique
+    (timestamp, eventTime, eventTimeHour, partyId, shopId, email, fingerprint, amount, currency, mobile, paymentId,
+     ip, bin, maskedPan, cardToken, resultStatus, checkedRule, checkedTemplate, bankCountry, invoiceId, bankName)
+    VALUES
+    ('2019-12-05', 1587761208, 1587759200000, 'group_1', '2035728', 'email', '4bef59146f8e4640ab34915f84ddac8b', 5000, 'EUR', 0, '1DkratTHbpg.1', '204.26.61.110', '666', '3125', '477bba133c182267fe5f086924abdc5db71f77bfc27f01f2843f2cdc69d89f05', 'NORMAL', 'COUNTRY_RULE', 'COUNTRY_TEMPLATE', 'NED', '1111vbuc', 'SBER');
+    INSERT INTO fraud.events_unique
+    (timestamp, eventTime, eventTimeHour, partyId, shopId, email, fingerprint, amount, currency, mobile, paymentId,
+     ip, bin, maskedPan, cardToken, resultStatus, checkedRule, checkedTemplate, bankCountry, invoiceId, bankName)
+    VALUES
+    ('2019-12-05', 1587761208, 1587759200000, 'group_1', '2035728', 'email', '4bef59146f8e4640ab34915f84ddac8b', 5000, 'RUB', 0, '1DkratTHbpg.1', '204.26.61.110', '666', '3125', '477bba133c182267fe5f086924abdc5db71f77bfc27f01f2843f2cdc69d89f05', 'NOTIFY', '3DS', '3DS_TEMPLATE', 'RUS', '1111vbtt', 'SBER');
+
+    INSERT INTO fraud.refund
+    (timestamp, eventTime, eventTimeHour, partyId, shopId, email, fingerprint, amount, currency, status, errorReason, id,
+     ip, bin, maskedPan, paymentTool, cardToken, paymentSystem, terminal, providerId, bankCountry, errorCode, paymentId)
+    VALUES
+    ('2020-05-06', 1588761208, 1588759200000, 'group_1', '2035728', 'email', '4bef59146f8e4640ab34915f84ddac8b', 10500, 'RUB', 'succeeded', '', '1DkraVdGJbs.1', '204.26.61.110', '666', '3125', 'bank_card', '477bba133c182267fe5f086924abdc5db71f77bfc27f01f2843f2cdc69d89f05', 'VISA', '123', '1', 'RUS', '', '1111vbd');
+    INSERT INTO fraud.refund
+    (timestamp, eventTime, eventTimeHour, partyId, shopId, email, fingerprint, amount, currency, status, errorReason, id,
+     ip, bin, maskedPan, paymentTool, cardToken, paymentSystem, terminal, providerId, bankCountry, errorCode, paymentId)
+    VALUES
+    ('2020-05-06', 1588761208, 1588759200000, 'group_1', '2035728', 'email', '4bef59146f8e4640ab34915f84ddac8b', 10500, 'RUB', 'failed', '', '1DkraVdGJfs.1', '204.26.61.110', '666', '3125', 'bank_card', '477bba133c182267fe5f086924abdc5db71f77bfc27f01f2843f2cdc69d89f05', 'VISA', '123', '1', 'RUS', '', '1111vba');
+    INSERT INTO fraud.refund
+    (timestamp, eventTime, eventTimeHour, partyId, shopId, email, fingerprint, amount, currency, status, errorReason, id,
+     ip, bin, maskedPan, paymentTool, cardToken, paymentSystem, terminal, providerId, bankCountry, errorCode, paymentId)
+    VALUES
+    ('2020-05-06', 1588761208, 1588759200000, 'group_1', '2035728', 'email_2', '5bef59146f8e4640ab34915f84ddac8b', 50000, 'RUB', 'succeeded', '', '1VMI0gIoAy0.2', '204.26.61.110', '666', '3125', 'bank_card', '477bba133c182267fe5f086924abdc5db71f77bfc27f01f2843f2cdc69d89f05', 'VISA', '123', '1', 'RUS', '', '1111vbc');
+    INSERT INTO fraud.refund
+    (timestamp, eventTime, eventTimeHour, partyId, shopId, email, fingerprint, amount, currency, status, errorReason, id,
+     ip, bin, maskedPan, paymentTool, cardToken, paymentSystem, terminal, providerId, bankCountry, errorCode, paymentId)
+    VALUES
+    ('2020-05-06', 1588761208, 1588759200000, 'group_1', '2035728', 'email_2', '5bef59146f8e4640ab34915f84ddac8b', 50000, 'RUB', 'failed', '', '1VMI3GwdR5s.1', '204.26.61.110', '666', '3125', 'bank_card', '477bba133c182267fe5f086924abdc5db71f77bfc27f01f2843f2cdc69d89f05', 'VISA', '123', '1', 'RUS', '', '1111vbf');
+    INSERT INTO fraud.refund
+    (timestamp, eventTime, eventTimeHour, partyId, shopId, email, fingerprint, amount, currency, status, errorReason, id,
+     ip, bin, maskedPan, paymentTool, cardToken, paymentSystem, terminal, providerId, bankCountry, errorCode, paymentId)
+    VALUES
+    ('2020-05-06', 1588761208, 1588759200000, 'partyId_2', '2035728', 'email_2', '4bef59146f8e4640ab34915f84ddac8b', 50000, 'RUB', 'succeeded', '', '1DkraVdGJfr.1', '204.26.61.110', '666', '3125', 'bank_card', '477bba133c182267fe5f086924abdc5db71f77bfc27f01f2843f2cdc69d89f05', 'VISA', '123', '1', 'RUS', '', '1111vbe');
+    INSERT INTO fraud.refund
+    (timestamp, eventTime, eventTimeHour, partyId, shopId, email, fingerprint, amount, currency, status, errorReason, id,
+     ip, bin, maskedPan, paymentTool, cardToken, paymentSystem, terminal, providerId, bankCountry, errorCode, paymentId)
+    VALUES
+    ('2020-05-06', 1588761208, 1588759200000, 'partyId_2', '2035729', 'email_2', '4bef59146f8e4640ab34915f84ddac8b', 50000, 'RUB', 'succeeded', '', '1DkraVdGJfs.1', '204.26.61.110', '666', '3125', 'bank_card', '477bba133c182267fe5f086924abdc5db71f77bfc27f01f2843f2cdc69d89f05', 'VISA', '123', '1', 'RUS', '', '1111vbdxx');
+    INSERT INTO fraud.refund
+    (timestamp, eventTime, eventTimeHour, partyId, shopId, email, fingerprint, amount, currency, status, errorReason, id,
+     ip, bin, maskedPan, paymentTool, cardToken, paymentSystem, terminal, providerId, bankCountry, errorCode, paymentId)
+    VALUES
+    ('2019-12-05', 1587761208, 1587759200000, 'group_1', '2035728', 'email', '4bef59146f8e4640ab34915f84ddac8b', 5000, 'RUB', 'succeeded', '', '1DkratTHbpg.1', '204.26.61.110', '666', '3125', 'bank_card', '477bba133c182267fe5f086924abdc5db71f77bfc27f01f2843f2cdc69d89f05', 'VISA', '123', '1', 'RUS', '', '1111vbdss');
+    INSERT INTO fraud.refund
+    (timestamp, eventTime, eventTimeHour, partyId, shopId, email, fingerprint, amount, currency, status, errorReason, id,
+     ip, bin, maskedPan, paymentTool, cardToken, paymentSystem, terminal, providerId, bankCountry, errorCode, paymentId)
+    VALUES
+    ('2019-12-05', 1587761208, 1587759200000, 'group_1', '2035728', 'email', '4bef59146f8e4640ab34915f84ddac8b', 5000, 'RUB', 'succeeded', '', '1DkratTHbpg.1', '204.26.61.110', '666', '3125', 'bank_card', '477bba133c182267fe5f086924abdc5db71f77bfc27f01f2843f2cdc69d89f05', 'VISA', '123', '1', 'RUS', '', '1111vbz');
+    INSERT INTO fraud.refund
+    (timestamp, eventTime, eventTimeHour, partyId, shopId, email, fingerprint, amount, currency, status, errorReason, id,
+     ip, bin, maskedPan, paymentTool, cardToken, paymentSystem, terminal, providerId, bankCountry, errorCode, paymentId)
+    VALUES
+    ('2019-12-05', 1587761208, 1587759200000, 'group_1', '2035728', 'email', '4bef59146f8e4640ab34915f84ddac8b', 5000, 'RUB', 'failed', '', '1DkratTHbpg.1', '204.26.61.110', '666', '3125', 'bank_card', '477bba133c182267fe5f086924abdc5db71f77bfc27f01f2843f2cdc69d89f05', 'VISA', '123', '1', 'RUS', '', '1111vbdsuy');
+    INSERT INTO fraud.refund
+    (timestamp, eventTime, eventTimeHour, partyId, shopId, email, fingerprint, amount, currency, status, errorReason, id,
+     ip, bin, maskedPan, paymentTool, cardToken, paymentSystem, terminal, providerId, bankCountry, errorCode, paymentId)
+    VALUES
+    ('2019-12-05', 1587761208, 1587759200000, 'group_1', '2035728', 'email', '4bef59146f8e4640ab34915f84ddac8b', 5000, 'RUB', 'failed', '666', '1DkratTHbpg.1', '204.26.61.110', '666', '3125', 'bank_card', '477bba133c182267fe5f086924abdc5db71f77bfc27f01f2843f2cdc69d89f05', 'VISA', '123', '1', 'RUS', 'Error', '1111vbtt');
+
 EOSQL
