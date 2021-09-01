@@ -74,13 +74,14 @@ services:
        - "8098:8098"
      environment:
        - CLUSTER_NAME=riakts
+       - WAIT_FOR_ERLANG=500
      labels:
        - "com.basho.riak.cluster.name=riakts"
      volumes:
        - /tmp/docker/riak/data:/etc/riak/schemas
 
    clickhouse:
-     image: yandex/clickhouse-server:19.17
+     image: yandex/clickhouse-server:19.17.6.36
      hostname: clickhouse
      container_name: clickhouse
      environment:
@@ -91,7 +92,7 @@ services:
        - 8123:8123
      volumes:
        - ./clickhouse/data:/var/lib/clickhouse
-       - ./clickhouse/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
+       - ./clickhouse/docker-entrypoint-initdb.d/init-db.sh:/docker-entrypoint-initdb.d/init-db.sh
 
    grafana:
      image: grafana/grafana:5.1.0
@@ -134,7 +135,7 @@ services:
       - 8990:8022
 
    wblist:
-     image: rbkmoney/wb-list-manager:4e1ef72046a43afaa24b34e4e537eef7e2761c74
+     image: rbkmoney/wb-list-manager:9676d131d4b6c2d90c0a230c173c07f1de30f298
      hostname: wblist
      container_name: wblist
      environment:
@@ -152,7 +153,7 @@ services:
        - 8991:8022
 
    fraudbusters:
-     image: rbkmoney/fraudbusters:f7f0490d81e715921ed88bc4abce0de2d7f9b507
+     image: rbkmoney/fraudbusters:9698d6d519f5d2344bd7486dfe7af31d089cd652-epic
      hostname: fraudbusters
      container_name: fraudbusters
      environment:
@@ -163,8 +164,9 @@ services:
        wb.list.service.url: "http://wblist:8022/v1/wb_list"
        clickhouse.db.url: "jdbc:clickhouse://clickhouse:8123/default"
        logging.config: "tmp/logback-test.xml"
-       clickhouse.db.user: ''
-       clickhouse.db.password: ''
+       card-token-pool.filePath: "card-tokens"
+       clickhouse.db.user: 'user'
+       clickhouse.db.password: 'password'
        fraud.management.url: 'fb-management:8080'
        result.full.check.enabled: 'false'
        spring.profiles.active: 'full-prod'
@@ -176,8 +178,10 @@ services:
        - kafka-setup
      ports:
        - 8999:8022
+       - 8111:8089
      volumes:
        - ./log-java:/opt/fraudbusters/tmp
+       - ./card-tokens:/opt/fraudbusters/card-tokens
 
    postgres-fb:
      container_name: postgres_container
@@ -195,7 +199,7 @@ services:
      restart: unless-stopped
 
    fb-management:
-     image: dr2.rbkmoney.com/rbkmoney/fraudbusters-management:8b906501743e6f6bd74681d59d3efa98f9e78dff
+     image: dr2.rbkmoney.com/rbkmoney/fraudbusters-management:e83f84b1e9dee2fec1b30f4b287cc8e702eb157a
      hostname: fb-management
      container_name: fb-management
      environment:
@@ -208,6 +212,7 @@ services:
        logging.config: "./tmp/logback-test.xml"
        management.metrics.binders.jvm.enabled: 'false'
        service.payment.url: 'http://fraudbusters:8022/fraud_payment/v1/'
+       service.historical.url: 'http://fraudbusters:8022/historical_data/v1/'
        spring.profiles.active: 'debug'
        keycloak.enabled: "true"
        keycloak.realm: "fraudbusters-realm"
@@ -226,7 +231,7 @@ services:
        - ./log-java:/opt/fraudbusters-management/tmp
 
    fraudbusters-ui:
-     image: dr2.rbkmoney.com/rbkmoney/fraudbusters-ui:75a4e93bceea50feb3a6a9fba84ceceb93ddb278
+     image: dr2.rbkmoney.com/rbkmoney/fraudbusters-ui:052ef663e0c86d1521ef213b04355da58b0e5cc9
      hostname: fraudbusters-ui
      container_name: fraudbusters-ui
      ports:
