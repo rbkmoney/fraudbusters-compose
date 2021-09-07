@@ -233,7 +233,7 @@ services:
        - ./log-java:/opt/fraudbusters-management/tmp
 
    fb-notificator:
-     image: dr2.rbkmoney.com/rbkmoney/fraudbusters-notificator:313a917f75424417393158527c257626ddb5e890
+     image: dr2.rbkmoney.com/rbkmoney/fraudbusters-notificator:01dac03e4b6da5f47cc7a0e981971969eeb40270
      hostname: fb-notificator
      container_name: fb-notificator
      environment:
