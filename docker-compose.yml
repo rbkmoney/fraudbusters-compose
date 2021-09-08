@@ -213,6 +213,7 @@ services:
        management.metrics.binders.jvm.enabled: 'false'
        service.payment.url: 'http://fraudbusters:8022/fraud_payment/v1/'
        service.historical.url: 'http://fraudbusters:8022/historical_data/v1/'
+       service.fb-notificator.url: 'http://fb-notificator:8080/'
        spring.profiles.active: 'debug'
        keycloak.enabled: "true"
        keycloak.realm: "fraudbusters-realm"
@@ -227,8 +228,60 @@ services:
        - wblist
        - postgres-fb
        - kafka-setup
+       - fb-notificator
      volumes:
        - ./log-java:/opt/fraudbusters-management/tmp
+
+   fb-notificator:
+     image: dr2.rbkmoney.com/rbkmoney/fraudbusters-notificator:01dac03e4b6da5f47cc7a0e981971969eeb40270
+     hostname: fb-notificator
+     container_name: fb-notificator
+     environment:
+       spring.datasource.url: "jdbc:postgresql://postgres-notificator:5432/fb_notificator"
+       logging.config: "./tmp/logback-test.xml"
+       management.metrics.binders.jvm.enabled: 'false'
+       warehouse.url: 'http://fb-warehouse:8022/query/v1/'
+       spring.profiles.active: 'debug'
+     ports:
+       - 8086:8080
+     depends_on:
+       - postgres-notificator
+       - fb-warehouse
+     volumes:
+       - ./log-java:/opt/fraudbusters-notificator/tmp
+
+   postgres-notificator:
+     container_name: postgres_notificator
+     hostname: postgres-notificator
+     image: postgres
+     environment:
+       POSTGRES_USER: postgres
+       POSTGRES_PASSWORD: postgres
+       POSTGRES_DB: fb_notificator
+       PGDATA: /data/postgres
+     ports:
+       - 6433:5432
+     volumes:
+       - ./postgres/data/4:/data/postgres
+     restart: unless-stopped
+
+   fb-warehouse:
+     image: dr2.rbkmoney.com/rbkmoney/fraudbusters-warehouse:f129351e97cc2a8c4e49d9a20f1e3415a68ccee9
+     hostname: fb-warehouse
+     container_name: fb-warehouse
+     environment:
+       clickhouse.db.url: "jdbc:clickhouse://clickhouse:8123/default"
+       clickhouse.db.user: 'user'
+       clickhouse.db.password: 'password'
+       logging.config: "./tmp/logback-test.xml"
+       management.metrics.binders.jvm.enabled: 'false'
+       spring.profiles.active: 'debug'
+     ports:
+       - 8088:8080
+     depends_on:
+       - clickhouse
+     volumes:
+       - ./log-java:/opt/fraudbusters-warehouse/tmp
 
    fraudbusters-ui:
      image: dr2.rbkmoney.com/rbkmoney/fraudbusters-ui:4a6f03b331ca9b90dc52bb93b88ae18bd29e155c
