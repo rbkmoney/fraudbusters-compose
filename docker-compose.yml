@@ -93,64 +93,64 @@ services:
      volumes:
        - ./clickhouse/data:/var/lib/clickhouse
        - ./clickhouse/docker-entrypoint-initdb.d/init-db.sh:/docker-entrypoint-initdb.d/init-db.sh
-#
-#   grafana:
-#     image: grafana/grafana:5.1.0
-#     hostname: grafana
-#     container_name: grafana
-#     ports:
-#       - 3000:3000
-#     environment:
-#       GF_INSTALL_PLUGINS: "grafana-piechart-panel,vertamedia-clickhouse-datasource"
-#       GF_SECURITY_ADMIN_USER: "admin"
-#       GF_SECURITY_ADMIN_PASSWORD: "admin"
-#     volumes:
-#       - ./grafana/dashboards:/etc/grafana/provisioning/dashboards
-#       - ./grafana/datasources:/etc/grafana/provisioning/datasources
-#
-#   postgres-columbus:
-#    image: rbkmoney/postgres-geodata:0eb52256576ec22f89fadc3e7fe505b692e838a3
-#    hostname: postgres-columbus
-#    container_name: postgres-columbus
-#    environment:
-#      POSTGRES_USER: postgres
-#      POSTGRES_PASSWORD: postgres
-#      POSTGRES_DB: columbus
-#    entrypoint:
-#      - /docker-entrypoint.sh
-#      - postgres
-#    ports:
-#      - 5432:5432
-#
-#   columbus:
-#    image: rbkmoney/columbus:88be0cbccde15c7d4c88403d495f8d564f826160
-#    hostname: columbus
-#    container_name: columbus
-#    environment:
-#      spring.datasource.url: "jdbc:postgresql://postgres-columbus:5432/columbus"
-#      logging.level.com.rbkmoney.woody: "ERROR"
-#    depends_on:
-#      - postgres-columbus
-#    ports:
-#      - 8990:8022
-#
-#   wblist:
-#     image: rbkmoney/wb-list-manager:9676d131d4b6c2d90c0a230c173c07f1de30f298
-#     hostname: wblist
-#     container_name: wblist
-#     environment:
-#       kafka.bootstrap.servers: "broker:9092"
-#       riak.address: riak
-#       riak.port: 8087
-#       management.metrics.export.statsd.enabled: "false"
-#       logging.level.com.rbkmoney.woody: "ERROR"
-#       kafka.wblist.topic.command: "wb-list-command"
-#       kafka.wblist.topic.event.sink: "wb-list-event-sink"
-#     depends_on:
-#       - riak
-#       - broker
-#     ports:
-#       - 8991:8022
+
+   grafana:
+     image: grafana/grafana:5.1.0
+     hostname: grafana
+     container_name: grafana
+     ports:
+       - 3000:3000
+     environment:
+       GF_INSTALL_PLUGINS: "grafana-piechart-panel,vertamedia-clickhouse-datasource"
+       GF_SECURITY_ADMIN_USER: "admin"
+       GF_SECURITY_ADMIN_PASSWORD: "admin"
+     volumes:
+       - ./grafana/dashboards:/etc/grafana/provisioning/dashboards
+       - ./grafana/datasources:/etc/grafana/provisioning/datasources
+
+   postgres-columbus:
+    image: rbkmoney/postgres-geodata:0eb52256576ec22f89fadc3e7fe505b692e838a3
+    hostname: postgres-columbus
+    container_name: postgres-columbus
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: columbus
+    entrypoint:
+      - /docker-entrypoint.sh
+      - postgres
+    ports:
+      - 5432:5432
+
+   columbus:
+    image: rbkmoney/columbus:88be0cbccde15c7d4c88403d495f8d564f826160
+    hostname: columbus
+    container_name: columbus
+    environment:
+      spring.datasource.url: "jdbc:postgresql://postgres-columbus:5432/columbus"
+      logging.level.com.rbkmoney.woody: "ERROR"
+    depends_on:
+      - postgres-columbus
+    ports:
+      - 8990:8022
+
+   wblist:
+     image: rbkmoney/wb-list-manager:9676d131d4b6c2d90c0a230c173c07f1de30f298
+     hostname: wblist
+     container_name: wblist
+     environment:
+       kafka.bootstrap.servers: "broker:9092"
+       riak.address: riak
+       riak.port: 8087
+       management.metrics.export.statsd.enabled: "false"
+       logging.level.com.rbkmoney.woody: "ERROR"
+       kafka.wblist.topic.command: "wb-list-command"
+       kafka.wblist.topic.event.sink: "wb-list-event-sink"
+     depends_on:
+       - riak
+       - broker
+     ports:
+       - 8991:8022
 
    fraudbusters:
      image: rbkmoney/fraudbusters:0d07546141ea87874f75cfb9856835d5e7d988ce
@@ -173,8 +173,8 @@ services:
      depends_on:
        - clickhouse
        - broker
-#       - columbus
-#       - wblist
+       - columbus
+       - wblist
        - kafka-setup
      ports:
        - 8999:8022
@@ -224,24 +224,24 @@ services:
      depends_on:
        - fraudbusters
        - broker
-#       - wblist
+       - wblist
        - postgres-fb
        - kafka-setup
      volumes:
        - ./log-java:/opt/fraudbusters-management/tmp
-#
-#   fraudbusters-ui:
-#     image: dr2.rbkmoney.com/rbkmoney/fraudbusters-ui:4a6f03b331ca9b90dc52bb93b88ae18bd29e155c
-#     hostname: fraudbusters-ui
-#     container_name: fraudbusters-ui
-#     ports:
-#       - 8989:8080
-#     depends_on:
-#       - fb-management
-#     volumes:
-#       - ./fraudbusters-ui/nginx.conf:/etc/nginx/vhosts.d/fraudbusters-ui.conf
-#       - ./fraudbusters-ui/appConfig.json:/usr/share/nginx/html/assets/appConfig.json
-#       - ./fraudbusters-ui/authConfig.json:/usr/share/nginx/html/assets/authConfig.json
+
+   fraudbusters-ui:
+     image: dr2.rbkmoney.com/rbkmoney/fraudbusters-ui:4a6f03b331ca9b90dc52bb93b88ae18bd29e155c
+     hostname: fraudbusters-ui
+     container_name: fraudbusters-ui
+     ports:
+       - 8989:8080
+     depends_on:
+       - fb-management
+     volumes:
+       - ./fraudbusters-ui/nginx.conf:/etc/nginx/vhosts.d/fraudbusters-ui.conf
+       - ./fraudbusters-ui/appConfig.json:/usr/share/nginx/html/assets/appConfig.json
+       - ./fraudbusters-ui/authConfig.json:/usr/share/nginx/html/assets/authConfig.json
 
    keyclock:
       image: dr2.rbkmoney.com/rbkmoney/keycloak:325c3260863fa16cf652911fe97df8b3e16c45ff
