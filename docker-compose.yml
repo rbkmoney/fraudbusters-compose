@@ -216,7 +216,6 @@ services:
        service.notification.url: 'http://fb-notificator:8022/notification/v1'
        service.notification-channel.url: 'http://fb-notificator:8022/notification-channel/v1'
        service.notification-template.url: 'http://fb-notificator:8022/notification-template/v1'
-       service.fb-notificator.url: 'http://fb-notificator:8022/'
        spring.profiles.active: 'debug'
        keycloak.enabled: "true"
        keycloak.realm: "fraudbusters-realm"
