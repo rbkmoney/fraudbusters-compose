@@ -153,7 +153,7 @@ services:
        - 8991:8022
 
    fraudbusters:
-     image: rbkmoney/fraudbusters:9698d6d519f5d2344bd7486dfe7af31d089cd652-epic
+     image: rbkmoney/fraudbusters:5a6874671b4dfe235eba71952c121b1400f3b625
      hostname: fraudbusters
      container_name: fraudbusters
      environment:
@@ -199,7 +199,7 @@ services:
      restart: unless-stopped
 
    fb-management:
-     image: dr2.rbkmoney.com/rbkmoney/fraudbusters-management:e83f84b1e9dee2fec1b30f4b287cc8e702eb157a
+     image: dr2.rbkmoney.com/rbkmoney/fraudbusters-management:1613785de7c551de4ab89ad74c18e116c4957a2c
      hostname: fb-management
      container_name: fb-management
      environment:
@@ -213,7 +213,9 @@ services:
        management.metrics.binders.jvm.enabled: 'false'
        service.payment.url: 'http://fraudbusters:8022/fraud_payment/v1/'
        service.historical.url: 'http://fraudbusters:8022/historical_data/v1/'
-       service.fb-notificator.url: 'http://fb-notificator:8080/'
+       service.notification.url: 'http://fb-notificator:8022/notification/v1'
+       service.notification-channel.url: 'http://fb-notificator:8022/notification-channel/v1'
+       service.notification-template.url: 'http://fb-notificator:8022/notification-template/v1'
        spring.profiles.active: 'debug'
        keycloak.enabled: "true"
        keycloak.realm: "fraudbusters-realm"
@@ -233,7 +235,7 @@ services:
        - ./log-java:/opt/fraudbusters-management/tmp
 
    fb-notificator:
-     image: dr2.rbkmoney.com/rbkmoney/fraudbusters-notificator:01dac03e4b6da5f47cc7a0e981971969eeb40270
+     image: dr2.rbkmoney.com/rbkmoney/fraudbusters-notificator:baf2332c3ca6d0860e30dacc10f7c9c60a726700
      hostname: fb-notificator
      container_name: fb-notificator
      environment:
@@ -243,7 +245,7 @@ services:
        warehouse.url: 'http://fb-warehouse:8022/query/v1/'
        spring.profiles.active: 'debug'
      ports:
-       - 8086:8080
+       - 8086:8022
      depends_on:
        - postgres-notificator
        - fb-warehouse
@@ -266,7 +268,7 @@ services:
      restart: unless-stopped
 
    fb-warehouse:
-     image: dr2.rbkmoney.com/rbkmoney/fraudbusters-warehouse:f129351e97cc2a8c4e49d9a20f1e3415a68ccee9
+     image: dr2.rbkmoney.com/rbkmoney/fraudbusters-warehouse:69ddadd89f84ec2afddc59f1c6074524367faf3e
      hostname: fb-warehouse
      container_name: fb-warehouse
      environment:
@@ -284,7 +286,7 @@ services:
        - ./log-java:/opt/fraudbusters-warehouse/tmp
 
    fraudbusters-ui:
-     image: dr2.rbkmoney.com/rbkmoney/fraudbusters-ui:052ef663e0c86d1521ef213b04355da58b0e5cc9
+     image: dr2.rbkmoney.com/rbkmoney/fraudbusters-ui:f0d4b45c0726f6b45f8ad42b77fb7f7750bd86b1
      hostname: fraudbusters-ui
      container_name: fraudbusters-ui
      ports:
@@ -297,7 +299,7 @@ services:
        - ./fraudbusters-ui/authConfig.json:/usr/share/nginx/html/assets/authConfig.json
 
    keyclock:
-      image: dr2.rbkmoney.com/rbkmoney/keycloak:8d6a2ad2c2afef8201a8801739d17379bdcc0d69
+      image: dr2.rbkmoney.com/rbkmoney/keycloak:325c3260863fa16cf652911fe97df8b3e16c45ff
       hostname: keyclock
       container_name: keyclock
       ports:
