@@ -37,8 +37,10 @@
    &nbsp;![alt text](../images/set-cred.png)
 10. Add roles for user  &nbsp;
     
-   &nbsp;![alt text](../images/add-role.png)
-11. Add to /etc/hosts ```127.0.0.1 keyclock```     
+   &nbsp;
+   ![alt text](../images/add-role.png)
+   &nbsp;
+11. Add to /etc/hosts ```127.0.0.1 keyclock```  
 12. Go to user interface and login as your user
 13. Templates -> Create template
    name - 
