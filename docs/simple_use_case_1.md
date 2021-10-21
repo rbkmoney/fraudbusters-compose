@@ -11,10 +11,10 @@
    &nbsp;
 4. Link to add realm button &nbsp;
 
+&nbsp;
+![alt text](../images/add-realm.png)
+&nbsp;
 
-   &nbsp;
-   ![alt text](../images/add-realm.png)
-   &nbsp;
 5. Load realm from package - keycloak/realm-export.json &nbsp;
 
    &nbsp;
@@ -25,49 +25,49 @@
    &nbsp;
    ![alt text](../images/add-web-origin-pattern.png)
    &nbsp;
-7. Go to users   &nbsp;
-   
+7. Go to users &nbsp;
+
    &nbsp;
    ![alt text](../images/go-user.png)
    &nbsp;
 
 8. Click add user
-9. Add credentials  &nbsp;
+9. Add credentials &nbsp;
 
    &nbsp;![alt text](../images/set-cred.png)
-10. Add roles for user  &nbsp;
-    
-   &nbsp;
-   ![alt text](../images/add-role.png)
-   &nbsp;
-11. Add to /etc/hosts ```127.0.0.1 keyclock```  
+10. Add roles for user &nbsp;
+
+&nbsp;
+![alt text](../images/add-role.png)
+&nbsp;
+
+11. Add to /etc/hosts ```127.0.0.1 keyclock```
 12. Go to user interface and login as your user
-13. Templates -> Create template
-   name - 
-        ```test```
-   template - 
-        ```rule:amount_test:amount >=1 -> decline;```
+13. Templates -> Create template name -
+    ```test```
+    template -
+    ```rule:amount_test:amount >=1 -> decline;```
 
     &nbsp;
-
-&nbsp;![alt text](../images/created-template.png)
-   
-14. Reference -> Create reference
-   Template id -
+    ![alt text](../images/created-template.png)
+    &nbsp;
+14. Reference -> Create reference Template id -
     ```test```
-   Party id -
+    Party id -
     ```partyTest```
-   Shop id -
+    Shop id -
     ```shopTest```
 
     &nbsp;
 
-&nbsp;![alt text](../images/created-reference.png)
+    &nbsp;
+    ![alt text](../images/created-reference.png)
+    &nbsp;
 
 15. Use simple example test https://github.com/rbkmoney/fraudbusters-examples for emulate user
 
 16. Historical data -> Inspect result
-
     &nbsp;
 
-&nbsp;![alt text](../images/result-data.png)
+    &nbsp;
+    ![alt text](../images/result-data.png)
