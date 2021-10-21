@@ -3,48 +3,71 @@
 ![alt text](../images/fraudbusters_sequence_diagram.png)
 
 1. Check all containers is running
-2. Open swagger api http://localhost:8080/fb-management/v1/swagger-ui.html
-3. Create new template:
-    
-    Template:
-    ```
-    rule:inWhiteList("email")->accept; // Check in white list by email, accept if exist 
-    rule:count("card_token",1444)>=9->decline; // Check count 
-    ```
-   JSON template command:
-    ```
-   {
-        "id": "test",
-        "template": "rule:inWhiteList(\"email\")->accept;rule:count(\"card_token\",1444)>=9->decline;"
-   }
-   ```
+2. Open keycloak http://localhost:8080
+3. Go to admin (admin/admin) &nbsp;
+
+   &nbsp;
+   ![alt text](../images/keycloak-admin.png)
+   &nbsp;
+4. Link to add realm button &nbsp;
+
+
+   &nbsp;
+   ![alt text](../images/add-realm.png)
+   &nbsp;
+5. Load realm from package - keycloak/realm-export.json &nbsp;
+
+   &nbsp;
+   ![alt text](../images/add-realm-2.png)
+   &nbsp;
+6. Add pattern for web origin &nbsp;
+
+   &nbsp;
+   ![alt text](../images/add-web-origin-pattern.png)
+   &nbsp;
+7. Go to users   &nbsp;
    
-    http://localhost:8080/fb-management/v1/swagger-ui.html#/payment-template-command-resource/insertTemplateUsingPOST_1
+   &nbsp;
+   ![alt text](../images/go-user.png)
+   &nbsp;
 
-    ![alt text](../images/template.jpg)
+8. Click add user
+9. Add credentials  &nbsp;
 
-4. Create reference for party and shop:
+   &nbsp;![alt text](../images/set-cred.png)
+10. Add roles for user  &nbsp;
+
+&nbsp;![alt text](../images/add-role.png)
+11. Add to /etc/hosts - 127.0.0.1       keyclock
+12. Go to user interface and login as your user  &nbsp;
+
+&nbsp;![alt text](../images/add-role.png)
+13. Templates -> Create template
+   name - 
+        ```test```
+   template - 
+        ```rule:amount_test:amount >=1 -> decline;```
+
+    &nbsp;
+
+&nbsp;![alt text](../images/created-template.png)
    
-   JSON template command:
-   ```
-   [
-     {
-       "id": "testRef",
-       "isDefault": false,
-       "isGlobal": false,
-       "partyId": "partyTest",
-       "shopId": "shopTest",
-       "templateId": "test"
-     }
-   ]
-   ```
-   
-    http://localhost:8080/fb-management/v1/swagger-ui.html#/payment-template-command-resource/insertReferenceUsingPOST_1
+14. Reference -> Create reference
+   Template id -
+    ```test```
+   Party id -
+    ```partyTest```
+   Shop id -
+    ```shopTest```
 
-    ![alt text](../images/reference.jpg)
-    
-5. Use simple example test https://github.com/rbkmoney/fraudbusters-examples for emulate user
+    &nbsp;
 
-6. Open grafana admin/admin by url http://localhost:3000/d/EAj2Hjwix/antifraud-prod?orgId=1&from=now%2Fy&to=now%2Fy&var-partyId=.&var-shopId=.&var-resultStatus=.&var-email=.&var-maskedPan=.*&var-invoiceId=.&var-bankCountry=.&var-cardToken=4J8vmnlYPwzYzia74fny81&var-fingerprint=.
+&nbsp;![alt text](../images/created-reference.png)
 
-    ![alt text](../images/result-grafana.jpg)
+15. Use simple example test https://github.com/rbkmoney/fraudbusters-examples for emulate user
+
+16. Historical data -> Inspect result
+
+    &nbsp;
+
+&nbsp;![alt text](../images/result-data.png)
