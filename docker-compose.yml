@@ -227,7 +227,7 @@ services:
      depends_on:
        - fraudbusters
        - broker
-#       - wblist
+       - wblist
        - postgres-fb
        - kafka-setup
        - fb-notificator
