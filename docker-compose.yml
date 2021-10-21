@@ -93,20 +93,20 @@ services:
      volumes:
        - ./clickhouse/data:/var/lib/clickhouse
        - ./clickhouse/docker-entrypoint-initdb.d/init-db.sh:/docker-entrypoint-initdb.d/init-db.sh
-
-   grafana:
-     image: grafana/grafana:5.1.0
-     hostname: grafana
-     container_name: grafana
-     ports:
-       - 3000:3000
-     environment:
-       GF_INSTALL_PLUGINS: "grafana-piechart-panel,vertamedia-clickhouse-datasource"
-       GF_SECURITY_ADMIN_USER: "admin"
-       GF_SECURITY_ADMIN_PASSWORD: "admin"
-     volumes:
-       - ./grafana/dashboards:/etc/grafana/provisioning/dashboards
-       - ./grafana/datasources:/etc/grafana/provisioning/datasources
+#
+#   grafana:
+#     image: grafana/grafana:5.1.0
+#     hostname: grafana
+#     container_name: grafana
+#     ports:
+#       - 3000:3000
+#     environment:
+#       GF_INSTALL_PLUGINS: "grafana-piechart-panel,vertamedia-clickhouse-datasource"
+#       GF_SECURITY_ADMIN_USER: "admin"
+#       GF_SECURITY_ADMIN_PASSWORD: "admin"
+#     volumes:
+#       - ./grafana/dashboards:/etc/grafana/provisioning/dashboards
+#       - ./grafana/datasources:/etc/grafana/provisioning/datasources
 
    postgres-columbus:
     image: rbkmoney/postgres-geodata:0eb52256576ec22f89fadc3e7fe505b692e838a3
@@ -199,11 +199,11 @@ services:
      restart: unless-stopped
 
    fb-management:
-     image: dr2.rbkmoney.com/rbkmoney/fraudbusters-management:1613785de7c551de4ab89ad74c18e116c4957a2c
+     image: rbkmoney/fraudbusters-management:1613785de7c551de4ab89ad74c18e116c4957a2c
      hostname: fb-management
      container_name: fb-management
      environment:
-       kafka.bootstrap.servers: "broker:9092"
+       kafka.bootstrap-servers: "broker:9092"
        kafka.wblist.topic.command: "wb-list-command"
        kafka.wblist.topic.event.sink: "wb-list-event-sink"
        kafka.fraudbusters.template: "template"
@@ -227,7 +227,7 @@ services:
      depends_on:
        - fraudbusters
        - broker
-       - wblist
+#       - wblist
        - postgres-fb
        - kafka-setup
        - fb-notificator
@@ -235,7 +235,7 @@ services:
        - ./log-java:/opt/fraudbusters-management/tmp
 
    fb-notificator:
-     image: dr2.rbkmoney.com/rbkmoney/fraudbusters-notificator:baf2332c3ca6d0860e30dacc10f7c9c60a726700
+     image: rbkmoney/fraudbusters-notificator:baf2332c3ca6d0860e30dacc10f7c9c60a726700
      hostname: fb-notificator
      container_name: fb-notificator
      environment:
@@ -262,13 +262,13 @@ services:
        POSTGRES_DB: fb_notificator
        PGDATA: /data/postgres
      ports:
-       - 6433:5432
+       - 6435:5432
      volumes:
        - ./postgres/data/4:/data/postgres
      restart: unless-stopped
 
    fb-warehouse:
-     image: dr2.rbkmoney.com/rbkmoney/fraudbusters-warehouse:69ddadd89f84ec2afddc59f1c6074524367faf3e
+     image: rbkmoney/fraudbusters-warehouse:69ddadd89f84ec2afddc59f1c6074524367faf3e
      hostname: fb-warehouse
      container_name: fb-warehouse
      environment:
@@ -286,7 +286,7 @@ services:
        - ./log-java:/opt/fraudbusters-warehouse/tmp
 
    fraudbusters-ui:
-     image: dr2.rbkmoney.com/rbkmoney/fraudbusters-ui:f0d4b45c0726f6b45f8ad42b77fb7f7750bd86b1
+     image: rbkmoney/fraudbusters-ui:f0d4b45c0726f6b45f8ad42b77fb7f7750bd86b1
      hostname: fraudbusters-ui
      container_name: fraudbusters-ui
      ports:
@@ -299,7 +299,7 @@ services:
        - ./fraudbusters-ui/authConfig.json:/usr/share/nginx/html/assets/authConfig.json
 
    keyclock:
-      image: dr2.rbkmoney.com/rbkmoney/keycloak:325c3260863fa16cf652911fe97df8b3e16c45ff
+      image: rbkmoney/keycloak:aae54b7dbcfdd28056634e66df27beab78aaf144
       hostname: keyclock
       container_name: keyclock
       ports:
