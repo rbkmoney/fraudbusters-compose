@@ -93,20 +93,20 @@ services:
      volumes:
        - ./clickhouse/data:/var/lib/clickhouse
        - ./clickhouse/docker-entrypoint-initdb.d/init-db.sh:/docker-entrypoint-initdb.d/init-db.sh
-#
-#   grafana:
-#     image: grafana/grafana:5.1.0
-#     hostname: grafana
-#     container_name: grafana
-#     ports:
-#       - 3000:3000
-#     environment:
-#       GF_INSTALL_PLUGINS: "grafana-piechart-panel,vertamedia-clickhouse-datasource"
-#       GF_SECURITY_ADMIN_USER: "admin"
-#       GF_SECURITY_ADMIN_PASSWORD: "admin"
-#     volumes:
-#       - ./grafana/dashboards:/etc/grafana/provisioning/dashboards
-#       - ./grafana/datasources:/etc/grafana/provisioning/datasources
+
+   grafana:
+     image: grafana/grafana:5.1.0
+     hostname: grafana
+     container_name: grafana
+     ports:
+       - 3000:3000
+     environment:
+       GF_INSTALL_PLUGINS: "grafana-piechart-panel,vertamedia-clickhouse-datasource"
+       GF_SECURITY_ADMIN_USER: "admin"
+       GF_SECURITY_ADMIN_PASSWORD: "admin"
+     volumes:
+       - ./grafana/dashboards:/etc/grafana/provisioning/dashboards
+       - ./grafana/datasources:/etc/grafana/provisioning/datasources
 
    postgres-columbus:
     image: rbkmoney/postgres-geodata:0eb52256576ec22f89fadc3e7fe505b692e838a3
