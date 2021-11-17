@@ -295,6 +295,12 @@ clickhouse client -n <<-EOSQL
     ALTER TABLE fraud.chargeback ADD COLUMN payerType String;
     ALTER TABLE fraud.chargeback ADD COLUMN tokenProvider String;
 
+    ALTER TABLE fraud.payment ADD COLUMN checkedTemplate String;
+    ALTER TABLE fraud.payment ADD COLUMN checkedRule String;
+    ALTER TABLE fraud.payment ADD COLUMN resultStatus String;
+
+    ALTER TABLE fraud.payment ADD COLUMN checkedResultsJson String;
+
     ALTER TABLE fraud.events_unique ADD COLUMN mobile UInt8;
     ALTER TABLE fraud.events_unique ADD COLUMN recurrent UInt8;
 

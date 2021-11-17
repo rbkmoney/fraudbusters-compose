@@ -53,6 +53,7 @@ services:
                                 kafka-topics --create --if-not-exists --zookeeper zookeeper:2181 --partitions 1 --replication-factor 1 --topic payment_event && \
                                 kafka-topics --create --if-not-exists --zookeeper zookeeper:2181 --partitions 1 --replication-factor 1 --topic refund_event && \
                                 kafka-topics --create --if-not-exists --zookeeper zookeeper:2181 --partitions 1 --replication-factor 1 --topic chargeback_event && \
+                                kafka-topics --create --if-not-exists --zookeeper zookeeper:2181 --partitions 1 --replication-factor 1 --topic withdrawal && \
                                 kafka-topics --create --if-not-exists --zookeeper zookeeper:2181 --partitions 1 --replication-factor 1 --topic unknown_initiating_entity && \
                                 kafka-topics --create --if-not-exists --zookeeper zookeeper:2181 --partitions 1 --replication-factor 1  --config cleanup.policy=compact --topic template && \
                                 kafka-topics --create --if-not-exists --zookeeper zookeeper:2181 --partitions 1 --replication-factor 1  --config cleanup.policy=compact --topic template_p2p && \
@@ -152,8 +153,31 @@ services:
      ports:
        - 8991:8022
 
+   trusted-tokens-manager:
+     image: rbkmoney/trusted-tokens-manager:c80faa351202b44e8cdd506daf6b268c41d08a2d
+     hostname: trusted-tokens-manager
+     container_name: trusted-tokens-manager
+     environment:
+       kafka.bootstrap-servers: "broker:9092"
+       kafka.client-id: "trusted-tokens-manager"
+       kafka.topics.payment.id: "payment_event"
+       kafka.topics.payment.consume.enabled: "true"
+       kafka.topics.withdrawal.consume.enabled: "true"
+       kafka.topics.withdrawal.id: "withdrawal"
+       riak.address: riak
+       riak.port: 8087
+       management.metrics.export.statsd.enabled: "false"
+       logging.config: "tmp/logback-test.xml"
+     depends_on:
+       - riak
+       - broker
+     ports:
+       - 8992:8022
+     volumes:
+       - ./log-java:/opt/trusted-tokens-manager/tmp
+
    fraudbusters:
-     image: rbkmoney/fraudbusters:5a6874671b4dfe235eba71952c121b1400f3b625
+     image: rbkmoney/fraudbusters:6b8d79795763fff52d7f8c85651380727417693b
      hostname: fraudbusters
      container_name: fraudbusters
      environment:
@@ -170,18 +194,37 @@ services:
        fraud.management.url: 'fb-management:8080'
        result.full.check.enabled: 'false'
        spring.profiles.active: 'full-prod'
+       trusted.tokens.url: 'http://trusted-tokens-manager:8022/trusted/tokens'
      depends_on:
        - clickhouse
        - broker
        - columbus
        - wblist
        - kafka-setup
+       - trusted-tokens-manager
      ports:
        - 8999:8022
        - 8111:8089
      volumes:
        - ./log-java:/opt/fraudbusters/tmp
        - ./card-tokens:/opt/fraudbusters/card-tokens
+
+   fraudbusters-api:
+     image: rbkmoney/fraudbusters-api:1d3a6d45cb097b94b8248cf66f629a2f28249306
+     hostname: fraudbusters-api
+     container_name: fraudbusters-api
+     environment:
+       management.security.enabled: 'false'
+       logging.config: "tmp/logback-test.xml"
+       fraudbusters.service.payment.url: 'http://fraudbusters:8022/fraud_payment/v1/'
+       fraudbusters.service.inspector.url: 'http://fraudbusters:8022/fraud_inspector/v1'
+       server.port: "8080"
+     depends_on:
+       - fraudbusters
+     ports:
+       - 9999:8080
+     volumes:
+       - ./log-java:/opt/fraudbusters-api/tmp
 
    postgres-fb:
      container_name: postgres_container
@@ -304,6 +347,7 @@ services:
       container_name: keyclock
       ports:
         - 8080:8080
+        - 8443:8443
       environment:
         KEYCLOAK_USER: "admin"
         KEYCLOAK_PASSWORD: "admin"
